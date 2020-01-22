@@ -2,4 +2,8 @@ Date(YYMMDD);Start(HH:MM);Stop(HH:MM);Location;Activity;Comment
 200114;15:30;17:00;Sci Life Labs;Administration and setup;github repo, f1000 account, cmake, venv
 200115;10:00;12:00;AlbaNova;Introduction meeting;
 200115;17:00;18:00;KTH;Researching install of FFTW;Slow progress
-200116;15:30;16:00;KTH;Onboarding with liver;
+200116;15:30;16:00;KTH;Onboarding with Oliver;
+200116;17:00;18:00;KTH;Reading, printing and signing safety briefing;
+200117;08:30;12:00;SciLifeLabs;Administration, Gromacs install and planning;Also started OverLeaf project
+200119;19:30;20:30;Home;Project report writing and Project planning;Some mail correspondance about Gromacs API
+200122;07:45;12:30;SciLifeLab;Finished installing Gromacs, Got a simulation to start running;Had to stop prematurely
