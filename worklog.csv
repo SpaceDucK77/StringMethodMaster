@@ -7,3 +7,4 @@ Date(YYMMDD);Start(HH:MM);Stop(HH:MM);Location;Activity;Comment
 200117;08:30;12:00;SciLifeLabs;Administration, Gromacs install and planning;Also started OverLeaf project
 200119;19:30;20:30;Home;Project report writing and Project planning;Some mail correspondance about Gromacs API
 200122;07:45;12:30;SciLifeLab;Finished installing Gromacs, Got a simulation to start running;Had to stop prematurely
+200124;16:30;17:30;Inferno Online;Trial run using API;Getting it to start was straight forward
