@@ -11,3 +11,8 @@ Date(YYMMDD);Start(HH:MM);Stop(HH:MM);Location;Activity;Comment
 200127;06:50;10:00;KTH;Writing project plan;
 200128;07:00;10:00;KTH;Project plan;
 200128;13:00;17:00;SciLifeLabs;Project plan;
+200129;07:15;09:00;SciLifeLab;Prototype 2;Starting
+200129;09:00;11:45;SciLifeLab;Biweekly meeting;First time
+200131;17:00;18:00;KTH;Prototype2 work;
+200203;14:00;15:00;KTH;Prototype2 got stuck;Error message not providing clear clues
+200204;14:00;18:00;KTH;Prototype2 work;workaround using subprocess cli connection
