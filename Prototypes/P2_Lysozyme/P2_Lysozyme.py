@@ -69,25 +69,25 @@ def main():
     try:
         #file_name = select_file("Please type the .pdb files name: ")
         file_name = "1aki.pdb"
-        file_name = clean_h2o(file_name,False)
+        clean_name = clean_h2o(file_name,False)
         out_name = "processed_" + ".".join(file_name.split(".")[:-1]) + ".gro"
         box_name = "newbox_" +  ".".join(file_name.split(".")[:-1]) + ".gro"
         solv_name = "solv_" +  ".".join(file_name.split(".")[:-1]) + ".gro"
         is_name = "ion_" + solv_name
         # First command line instruction, currently not working, could not understand error message
         sp.run(["rm", "\#*"])
-        sp.run(["gmx", "pdb2gmx", "-water", "spce", "-ff", "oplsaa", "-f", file_name,\
+        sp.run(["gmx", "pdb2gmx", "-water", "spce", "-ff", "oplsaa", "-f", clean_name,\
                 "-o", out_name])
         """
         test=gmx.commandline_operation(executable = "pdb2gmx",
                                   arguments = ["-water", "spce"
                                                ,"-ff", "oplsaa"
                                                ]
-                                               #,"-f",file_name
+                                               #,"-f",clean_name
                                                #,"-o",out_name)
                                        ,
                                        #)
-                                       input_files = {"-f":file_name},
+                                       input_files = {"-f":clean_name},
                                        output_files = {"-o":out_name})
         test.run()"""
         #file_name = "conf.gro"
@@ -106,7 +106,8 @@ def main():
         nname = "CL" #get_nname()
         sp.run(["gmx", "grompp", "-f", ion_name, "-c", solv_name, "-p", "topol.top",\
                 "-o", ion_top])
-        sp.run(["gmx", "genion", "-s", ion_top, "-o", is_name, "-p", "topol.top", "-pname", \
+        #f = open("
+        sp.run(["echo", "SOL", "|", "gmx", "genion", "-s", ion_top, "-o", is_name, "-p", "topol.top", "-pname", \
                 pname, "-nname", nname, "-neutral"])
         
     except stop:
