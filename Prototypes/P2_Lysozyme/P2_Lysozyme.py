@@ -67,6 +67,7 @@ def clean_h2o(file_name, ask_confirmation = True):
 
 def main():
     try:
+        '''
         #file_name = select_file("Please type the .pdb files name: ")
         file_name = "1aki.pdb"
         clean_name = clean_h2o(file_name,False)
@@ -74,10 +75,11 @@ def main():
         box_name = "newbox_" +  ".".join(file_name.split(".")[:-1]) + ".gro"
         solv_name = "solv_" +  ".".join(file_name.split(".")[:-1]) + ".gro"
         is_name = "ion_" + solv_name
-        # First command line instruction, currently not working, could not understand error message
-        sp.run(["rm", "\#*"])
+        sp.run(["rm", "\\#*"])
+        #return
         sp.run(["gmx", "pdb2gmx", "-water", "spce", "-ff", "oplsaa", "-f", clean_name,\
                 "-o", out_name])
+        # First command line instruction, currently not working, could not understand error message
         """
         test=gmx.commandline_operation(executable = "pdb2gmx",
                                   arguments = ["-water", "spce"
@@ -107,9 +109,29 @@ def main():
         sp.run(["gmx", "grompp", "-f", ion_name, "-c", solv_name, "-p", "topol.top",\
                 "-o", ion_top])
         #f = open("
-        sp.run(["echo", "SOL", "|", "gmx", "genion", "-s", ion_top, "-o", is_name, "-p", "topol.top", "-pname", \
-                pname, "-nname", nname, "-neutral"])
+        sp.run(["gmx", "genion", "-s", ion_top, "-o", is_name, "-p","topol.top",\
+                "-pname", pname, "-nname", nname, "-neutral"], input="SOL", text=True)
+
+        # Energy minimization
+        sp.run(["gmx", "grompp", "-f", "minim.mdp", "-c", is_name, "-p", "topol.top",\
+                "-o", "em.tpr"])
+        sp.run(["gmx", "mdrun", "-deffnm", "em"])
+
+        # Equilibration
+        sp.run(["gmx", "grompp", "-f", "nvt.mdp", "-c", "em.gro", "-r", "em.gro", "-p",\
+                "topol.top", "-o",  "nvt.tpr"])
+        sp.run(["gmx", "mdrun", "-deffnm", "nvt"])
         
+        # Equilibration 2
+        sp.run(["gmx", "grompp", "-f", "npt.mdp", "-c", "nvt.gro", "-r", "nvt.gro", "-p",\
+                "topol.top", "-o", "npt.tpr"])
+        
+        sp.run(["gmx", "mdrun", "-deffnm", "npt"])'''
+
+        # RUN
+        sp.run(["gmx", "grompp", "-f", "md.mdp", "-c", "npt.gro", "-t", "npt.cpt", "-p", \
+                "topol.top", "-o", "md_0_1.tpr"])
+        sp.run(["gmx", "mdrun", "-deffnm", "md_0_1"])
     except stop:
         print ("*** Exiting program per users wishes ***")
         return

@@ -16,3 +16,7 @@ Date(YYMMDD);Start(HH:MM);Stop(HH:MM);Location;Activity;Comment
 200131;17:00;18:00;KTH;Prototype2 work;
 200203;14:00;15:00;KTH;Prototype2 got stuck;Error message not providing clear clues
 200204;14:00;18:00;KTH;Prototype2 work;workaround using subprocess cli connection
+200205;07:30;14:45;SciLifeLabs;Install and conf. MacOS High Sierra VM for VMD;Unsuccesful
+200206;13:30;17:00;KTH;Install and conf. Ubuntu VMD;
+200207;15:30;18:00;SciLifeLabs;Finishing Lysozyme prototype;
+200211;16:00;18:00;KTH;P3 skeleton, reading gromacs documentation and asking for help;
