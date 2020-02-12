@@ -13,6 +13,7 @@ QUIT="If you wish to quit the program, you can do so by typing " +\
 class stop(Exception):
     pass
 
+""" Asks for a file name and returns an existing one. """
 def select_file(query):
     file_found =  False
     while not file_found:
@@ -31,6 +32,7 @@ def select_file(query):
             print(QUIT)
     return file_name
 
+""" Asks the user to confirm an action. """
 def confirm(action):
     no_answer = True
     while no_answer:
@@ -45,6 +47,8 @@ def confirm(action):
         no_answer =  False
     return reply in ("y", "yes")
 
+
+""" Creates a new .pdb file from another without crystal water. """
 def clean_h2o(file_name, ask_confirmation = True):
     if ask_confirmation and not confirm("clear crystal water from .pdb file"):
         return file_name
@@ -67,14 +71,15 @@ def clean_h2o(file_name, ask_confirmation = True):
 
 def main():
     try:
-        '''
-        #file_name = select_file("Please type the .pdb files name: ")
-        file_name = "1aki.pdb"
-        clean_name = clean_h2o(file_name,False)
+        file_name = select_file("Please type the .pdb files name: ")
+        clean_name = clean_h2o(file_name)
         out_name = "processed_" + ".".join(file_name.split(".")[:-1]) + ".gro"
         box_name = "newbox_" +  ".".join(file_name.split(".")[:-1]) + ".gro"
         solv_name = "solv_" +  ".".join(file_name.split(".")[:-1]) + ".gro"
         is_name = "ion_" + solv_name
+
+        """ Haven't been able to get this to work lately, meant to delete old backups
+            might also unintentionally delete valuable work so not very safe. """
         sp.run(["rm", "\\#*"])
         #return
         sp.run(["gmx", "pdb2gmx", "-water", "spce", "-ff", "oplsaa", "-f", clean_name,\
@@ -97,7 +102,7 @@ def main():
         #                                  arguments = ["-c", "-d", "1.0", "-bt", "cubic"])
         #test2.run()
 
-        """ Until I get a grip on what Iäm doing wrong with commandline_operation """
+        """ Until I get a grip on what I'm doing wrong with commandline_operation """
         sp.run(["gmx", "editconf", "-c", "-d", "1.0", "-bt", "cubic", "-f", out_name, \
                 "-o", box_name])
         sp.run(["gmx", "solvate", "-cp", box_name, "-o", solv_name, "-p", "topol.top"])
@@ -126,7 +131,7 @@ def main():
         sp.run(["gmx", "grompp", "-f", "npt.mdp", "-c", "nvt.gro", "-r", "nvt.gro", "-p",\
                 "topol.top", "-o", "npt.tpr"])
         
-        sp.run(["gmx", "mdrun", "-deffnm", "npt"])'''
+        sp.run(["gmx", "mdrun", "-deffnm", "npt"])
 
         # RUN
         sp.run(["gmx", "grompp", "-f", "md.mdp", "-c", "npt.gro", "-t", "npt.cpt", "-p", \
