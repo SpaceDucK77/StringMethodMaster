@@ -1,15 +1,15 @@
 ;
 ;	File 'topol.top' was generated
 ;	By user: markopetrovic (501)
-;	On host: eduroam-10-200-6-123.local.su.se
-;	At date: Fri Feb  7 14:00:27 2020
+;	On host: n160-p165.eduroam.kth.se
+;	At date: Thu Feb 27 17:23:18 2020
 ;
 ;	This is a standalone topology file
 ;
 ;	Created by:
 ;	                     :-) GROMACS - gmx pdb2gmx, 2020 (-:
 ;	
-;	Executable:   /usr/local/gromacs/bin//gmx
+;	Executable:   /usr/local/gromacs/bin/gmx
 ;	Data prefix:  /usr/local/gromacs
 ;	Working dir:  /Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/P2_Lysozyme
 ;	Command line:

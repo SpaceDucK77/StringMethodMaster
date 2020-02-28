@@ -53,9 +53,9 @@ def single_run():
     sp.run(["gmx", "mdrun", "-deffnm", "md_0_1"])
 
 def prep_run():
-    translate()
-    solvate()
-    ions()
+    #translate()
+    #solvate()
+    #ions()
     e_minimize()
     equilibrate()
 

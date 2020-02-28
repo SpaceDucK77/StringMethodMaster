@@ -1,17 +1,17 @@
 ;
 ;	File 'mdout.mdp' was generated
 ;	By user: markopetrovic (501)
-;	On host: 130-229-15-187-dhcp.wlan.ki.se
-;	At date: Fri Feb  7 16:28:22 2020
+;	On host: n160-p165.eduroam.kth.se
+;	At date: Thu Feb 27 17:43:26 2020
 ;
 ;	Created by:
 ;	                      :-) GROMACS - gmx grompp, 2020 (-:
 ;	
-;	Executable:   /usr/local/gromacs/bin//gmx
+;	Executable:   /usr/local/gromacs/bin/gmx
 ;	Data prefix:  /usr/local/gromacs
 ;	Working dir:  /Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/P2_Lysozyme
 ;	Command line:
-;	  gmx grompp -f md.mdp -c npt.gro -t npt.cpt -p topol.top -o md_0_1.tpr
+;	  gmx grompp -f md.mdp -c '/Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/P2_Lysozyme/mdrun_2_287972277_0/confout.gro' -t '/Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/P2_Lysozyme/mdrun_2_287972277_0/state.cpt' -p topol.top -o md_0_1.tpr
 
 ; VARIOUS PREPROCESSING OPTIONS
 ; Preprocessor information: use cpp syntax.

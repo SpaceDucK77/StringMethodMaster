@@ -1,18 +1,18 @@
 Date(YYMMDD);Start(HH:MM);Stop(HH:MM);Location;Activity;Comment
-200114;15:30;17:00;Sci Life Labs;Administration and setup;github repo, f1000 account, cmake, venv
+200114;15:30;17:00;SciLifeLabs;Administration and setup;github repo, f1000 account, cmake, venv
 200115;10:00;12:00;AlbaNova;Introduction meeting;
 200115;17:00;18:00;KTH;Researching install of FFTW;Slow progress
 200116;15:30;16:00;KTH;Onboarding with Oliver;
 200116;17:00;18:00;KTH;Reading, printing and signing safety briefing;
 200117;08:30;12:00;SciLifeLabs;Administration, Gromacs install and planning;Also started OverLeaf project
 200119;19:30;20:30;Home;Project report writing and Project planning;Some mail correspondance about Gromacs API
-200122;07:45;12:30;SciLifeLab;Finished installing Gromacs, Got a simulation to start running;Had to stop prematurely
+200122;07:45;12:30;SciLifeLabs;Finished installing Gromacs, Got a simulation to start running;Had to stop prematurely
 200124;16:30;17:30;Inferno Online;Trial run using API;Getting it to start was straight forward
 200127;06:50;10:00;KTH;Writing project plan;
 200128;07:00;10:00;KTH;Project plan;
 200128;13:00;17:00;SciLifeLabs;Project plan;
-200129;07:15;09:00;SciLifeLab;Prototype 2;Starting
-200129;09:00;11:45;SciLifeLab;Biweekly meeting;First time
+200129;07:15;09:00;SciLifeLabs;Prototype 2;Starting
+200129;09:00;11:45;SciLifeLabs;Biweekly meeting;First time
 200131;17:00;18:00;KTH;Prototype2 work;
 200203;14:00;15:00;KTH;Prototype2 got stuck;Error message not providing clear clues
 200204;14:00;18:00;KTH;Prototype2 work;workaround using subprocess cli connection
@@ -20,3 +20,7 @@ Date(YYMMDD);Start(HH:MM);Stop(HH:MM);Location;Activity;Comment
 200206;13:30;17:00;KTH;Install and conf. Ubuntu VMD;
 200207;15:30;18:00;SciLifeLabs;Finishing Lysozyme prototype;
 200211;16:00;18:00;KTH;P3 skeleton, reading gromacs documentation and asking for help;
+200212;07:00;14:45;SciLifeLabs;Biweekly meeting, help on Collective Variables and the String method;
+200218;11:30;17:30;SciLifeLabs;Adapting P2 to gmxapi; mostly Unsuccesful
+200226;07:30;11:45;SciLifeLabs;Adapting P2 to gmxapi and structuring future work; mostly succesful
+200227;14:30;19:00;KTH;Ran P2 using API only;Still needed to create filename strings for files created by md-run
