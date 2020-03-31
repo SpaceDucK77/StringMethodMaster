@@ -14,41 +14,37 @@ import os
 from VIS import *
 from md_tools import *
 
-def get_angle(topology_file, index_file):
-    angler = gmx.commandline_operation(executable = "gmx",
-                                       arguments = ["gangle",
-                                                    "-g1", "dihedral",
-                                                    "-group1", "dihedrals"],
-                                       input_files = {"-s": topology_file,
-                                                      "-n": index_file},
-                                       output_files = {"-oall": "temp.xvg"})
-    angler.run()
-    result = open("temp.xvg").read().split("\n")[-2]
-    angles = result.split()[1:]
-    #print(angles)
-    angles = [float(angle) for angle in angles]
-    os.remove("temp.xvg")
-    return angles
-                                       
-
-def get_cartesian(topology_file, atom_nos = None):
-    # 9 and 15
-    if atom_nos is None:
-        atom_nos = [9, 15]
-    file = open(topology_file)
-    lines = file.read().split("\n")
-    atoms = [lines[atom_no+1] for atom_no in atom_nos]
-    coords = [[float(coord) for coord in atom.split()[-3:]] for atom in atoms]
-    return coords
 
 
 def linear_interpolation(start, end, parts = 10):
-    pass
+    states = [None]*(parts-1)
+    delta = []
+    for i in range(len(start)):
+        delta.append(end[i]-start[i])
+    for i in range(1, parts):
+        state = []
+        for j in range(len(start)):
+            state.append(start[j]+delta[j]*i/parts)
+        states[i-1]=state
+    return states
+        
 
 #def non_linear_interpolation():
 
-def create_VIS():
-    vis = VIS()
+def create_VIS(file, CVs):
+    vis = VIS(file)
+    vis.EM()
+    # prepare VIS
+    """ #
+    vis.box()
+    vis.solvate()
+    vis.ions()
+    vis.EM()
+    vis.nvt()
+    vis.npt()
+    vis.run()
+    """
+    return vis
 
 def create_string():
     pass
@@ -61,8 +57,15 @@ def p3_run():
     
     # 2: Get Final angles
     end_angles = get_angle("end.gro", "test.ndx")
+    
     # 3: Create start and end VISs
+    startVIS = create_VIS("start.gro", start_angles)#, stationary)
+    endVIS = create_VIS("end.gro", end_angles)#, stationary)
+    
     # 4: Calculate CV VIS angles
+    CVstates = linear_interpolation(start_angles, end_angles)
+    print(CVstates)
+    
     # 5: Create string of VISs through coordinate pulling
 
 

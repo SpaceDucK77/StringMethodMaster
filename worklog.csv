@@ -21,6 +21,28 @@ Date(YYMMDD);Start(HH:MM);Stop(HH:MM);Location;Activity;Comment
 200207;15:30;18:00;SciLifeLabs;Finishing Lysozyme prototype;
 200211;16:00;18:00;KTH;P3 skeleton, reading gromacs documentation and asking for help;
 200212;07:00;14:45;SciLifeLabs;Biweekly meeting, help on Collective Variables and the String method;
-200218;11:30;17:30;SciLifeLabs;Adapting P2 to gmxapi; mostly Unsuccesful
-200226;07:30;11:45;SciLifeLabs;Adapting P2 to gmxapi and structuring future work; mostly succesful
+200218;11:30;17:30;SciLifeLabs;Adapting P2 to gmxapi; mostly Unsuccessful
+200226;07:30;11:45;SciLifeLabs;Adapting P2 to gmxapi and structuring future work; mostly successful
 200227;14:30;19:00;KTH;Ran P2 using API only;Still needed to create filename strings for files created by md-run
+200304;09:00;10:30;SciLifeLabs;Minor tasks;Actually spread out over the day, but focus was on non related grading.
+200305;09:00;10:00;SciLifeLabs;Minor tasks;Actually spread out over the day, but focus was on non related grading.
+200311;07:30;12:00;SciLifeLabs;Preparing for and attending Bi-weekly meeting; A fairly intense period of both exams, presentations, lab report writing and grading affected work intensity on thesis
+200311;13:00;16:30;SciLifeLabs;Learning pull coordinates and umbrella sampling.;
+200323;07:00;08:45;Home;More pull coordinates;
+200323;08:45;09:15;Home;Zoom with co-supervisor;Discussing what's next and how to move forward.
+200323;09:30;11:00;Home;Project plan;Adding required sections.
+200323;13:00;17:00;Home;Project plan;Adding required sections.
+200324;08:00;12:30;Home;Project plan;Adding required sections.
+200324;13:00;16:00;Home;Project plan;Adding required sections.
+200324;16:00;17:30;Home;Half time presentation;Planing and creating slides.
+200325;05:30;07:00;Home;Half time presentation;Planing, creating slides and producing images.
+200325;09:00;13:30;Home;Figuring out dihedral angle extraction;As to use Gromacs rather than calculating from coordinates.
+200325;13:30;16:45;Home;Bi-weekly meeting;Over Zoom.
+200326;09:00;10:00;Home;Figuring out dihedral angle extraction;
+200326;11:00;12:00;Home;Figuring out dihedral angle extraction;and updating worklog.
+200329;16:00;17:00;Home;Coordinate extraction;
+200330;17:00;18:00;Home;VIS class skeleton;
+200331;07:00;09:00;Home;VIS class, limited usability and VIS objects;
+200331;09:00;09:30;Home;Zoom update with co-supervisor;
+200331;10:30;12:15;Home;VIS object limited specific MD-run capability;
+200331;13:00;15:30;Home;VIS object limited generalised MD-run capability, linear specific CV interpolation, status update;
