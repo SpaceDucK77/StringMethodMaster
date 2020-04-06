@@ -46,8 +46,10 @@ def create_VIS(file, CVs):
     """
     return vis
 
-def create_string():
-    pass
+def create_string(start, end, intermediaries):
+    n = len(intermediaries)
+    
+    
 
 # Specific run with few variables and many constants.
 def p3_run():
@@ -64,10 +66,10 @@ def p3_run():
     
     # 4: Calculate CV VIS angles
     CVstates = linear_interpolation(start_angles, end_angles)
-    print(CVstates)
+    
     
     # 5: Create string of VISs through coordinate pulling
-
+    create_string(startVIS, endVIS, CVstates)
 
 
     return

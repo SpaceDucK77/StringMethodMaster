@@ -46,3 +46,4 @@ Date(YYMMDD);Start(HH:MM);Stop(HH:MM);Location;Activity;Comment
 200331;09:00;09:30;Home;Zoom update with co-supervisor;
 200331;10:30;12:15;Home;VIS object limited specific MD-run capability;
 200331;13:00;15:30;Home;VIS object limited generalised MD-run capability, linear specific CV interpolation, status update;
+200403;15:00;18:00;Home;linear CV interpolation values done;

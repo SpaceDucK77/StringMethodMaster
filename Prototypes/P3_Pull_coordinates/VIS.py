@@ -10,6 +10,7 @@ import os
 from md_tools import *
 
 class VIS:
+    # Virtual Initial State for Gromacs MD
 
     def __init__(self, conf, collection = None):
         self.mdp_settings = {}
@@ -21,24 +22,32 @@ class VIS:
         self.history = []
 
     def box(self):
+        # To define MD Box
         pass
 
 
     def get_CVs(self):
+        # Extracts Alanine dipeptide phi and chi angles
         return get_angle(self.configuration_file, "test.ndx")
     
     def solvate(self):
+        # Solvates box
         pass
 
     def ions(self):
+        # Adding ions to box
         pass
 
     def EM(self):
-        keys, self.mdp_settings["em"] = read_mdp("mdp_templates/minim.mdp.templ")
-        self.single_run("em")
+        # Sets up for an EM MD run preparation 
+        self.single_run(name = "em",
+                        template = "mdp_templates/minim.mdp.templ")
 
-    def single_run(self, name, log = False):
-        mdp_create(name + ".mdp", self.mdp_settings[name])
+    def single_run(self, name, log = False, template = ""):
+        # Preperes a run and runs it.
+        mdp_create(fil_name = name + ".mdp",
+                   new_parameters = self.mdp_settings[name],
+                   old_file = template)
         prep = gmx.commandline_operation(executable = "gmx", 
                                          arguments = ["grompp"],
                                          input_files = {"-f": name + ".mdp",
@@ -58,10 +67,17 @@ class VIS:
         os.remove(name+".mdp")
 
     def nvt(self):
+        # Sets up for a constant volume equilibration run preparation
         pass
 
     def npt(self):
+        # Sets up for a constant preassure equilibration run preparation
+        pass
+
+    def steered(self):
+        # Sets up for a steered run preparation
         pass
 
     def run(self):
+        # Sets up for an MD run preparation
         pass

@@ -1,0 +1,2 @@
+gmx grompp -f md_pull_test.mdp -c start.gro -p topol.top -r start.gro -n index.ndx -o pull.tpr -maxwarn 1
+gmx mdrun -deffnm pull
