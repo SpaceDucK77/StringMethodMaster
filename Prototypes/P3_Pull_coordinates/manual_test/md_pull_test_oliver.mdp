@@ -1,0 +1,90 @@
+; From plumed cambridge tutorial 2015, only changed simulation length and output params
+;	Input file
+;
+define              =
+; integrator
+integrator          =  md
+nsteps              =  50000
+dt                  =  0.002
+;
+; removing CM translation and rotation
+comm_mode           =  Angular
+nstcomm             =  1000
+;
+; output control
+nstlog                   = 500
+nstenergy                = 500
+nstxout                  = 500
+nstvout                  = 500
+nstfout                  = 500
+;
+; neighbour searching
+nstlist             = 20
+ns_type             = simple
+pbc                 = no
+rlist               = 0.0
+periodic_molecules  = no
+;
+; electrostatic
+rcoulomb            = 0.0
+coulombtype         = Cut-off
+;
+; vdw
+vdw-type            = Cut-off
+rvdw                = 0.0
+;
+; constraints
+constraints              = all-bonds
+constraint-algorithm     = lincs
+lincs_iter               = 4
+;
+; temperature
+Tcoupl              = v-rescale
+tc_grps             = system
+tau_t               = 0.1
+ref_t               = 300.000
+;
+; pression
+Pcoupl              =  no
+;Pcoupl              =  berendsen
+;Pcoupltype          =  isotropic
+;tau_p               =  0.5
+;compressibility     =  4.5e-5
+;ref_p               =  1.0
+;
+; initial velocities
+gen_vel             = no
+gen_temp            = 300.000
+; gen_seed            = -1
+continuation            = yes
+;Settings added by me
+cutoff-scheme=verlet
+nstxout-compressed		 = 500
+;xtc-grps                 = protein
+; group definition
+;xtc-precision            = 0
+
+; Pull code
+pull                    = yes
+pull_ncoords            = 2         ; phi and chi
+pull_ngroups            = 5         ; three common and two unique groups
+pull_group1_name        = C0
+pull_group2_name        = N
+pull_group3_name        = CA
+pull_group4_name        = C
+pull_group5_name        = N2
+pull_coord1_type        = umbrella  ; harmonic potential
+pull_coord1_geometry    = dihedral
+pull_coord1_dim         = Y Y Y
+pull_coord1_groups      = 1 2 2 3 3 4
+pull_coord1_start       = yes       ; define initial COM distance > 0
+pull_coord1_rate        = 0.1     ; 0.01 degrees per ps = 10 degrees per ns
+pull_coord1_k           = 1000       ; kJ mol^-1 rad^-2
+
+pull_coord2_type        = umbrella  ; harmonic potential
+pull_coord2_geometry    = dihedral
+pull_coord2_dim         = Y Y Y
+pull_coord2_groups      = 2 3 3 4 4 5
+pull_coord2_start       = yes       ; define initial COM distance > 0
+pull_coord2_rate        = 0.1     ; 0.01 degrees per ps = 10 degrees per ns
+pull_coord2_k           = 1000       ; kJ mol^-1 rad^-2

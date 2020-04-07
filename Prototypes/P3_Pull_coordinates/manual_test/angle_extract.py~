@@ -1,0 +1,6 @@
+from md_tools import *
+
+def get_angles():
+    angles = []
+    for i in range(1,502):
+        angles.append(get_angle("conf" + str(i) + ".gro"),)

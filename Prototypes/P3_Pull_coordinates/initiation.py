@@ -26,12 +26,12 @@ def linear_interpolation(start, end, parts = 10):
         for j in range(len(start)):
             state.append(start[j]+delta[j]*i/parts)
         states[i-1]=state
-    return states
-        
+    return states, delta
+
 
 #def non_linear_interpolation():
 
-def create_VIS(file, CVs):
+def create_VIS(file, CVs = "Use currently uncertain"):
     vis = VIS(file)
     vis.EM()
     # prepare VIS
@@ -46,30 +46,45 @@ def create_VIS(file, CVs):
     """
     return vis
 
-def create_string(start, end, intermediaries):
+def create_string(start, end, intermediaries, delta):
     n = len(intermediaries)
-    
-    
+    cv_span={}
+    for i in range(len(delta)):
+        cv_span["pull_coord" + str(i+1) +"_rate"] = delta[i]/500
+    start.steered(new_parameters = cv_span)
+    path = start.split_traj()
+    cv_traj = get_angles(path = path)
+    print(delta)
+    ptint(intermediaries)
+    n_traj, n_targ = normalise(cv_traj, intermediaries, start, delta)
+    indexes =  find_matches(n_traj, n_targ)
+    print(indexes)
+    VIS_collection = []
+    for i in indexes:
+        VIS_collection.append(VIS(path+"conf"+str(i)+".gro"))
+    return VIS_collection
+
 
 # Specific run with few variables and many constants.
 def p3_run():
     # 1: Get Initial coordinates and CV angles
     start_angles = get_angle("start.gro", "test.ndx")
     stationary = get_cartesian("start.gro")
-    
+
     # 2: Get Final angles
     end_angles = get_angle("end.gro", "test.ndx")
-    
+
     # 3: Create start and end VISs
     startVIS = create_VIS("start.gro", start_angles)#, stationary)
     endVIS = create_VIS("end.gro", end_angles)#, stationary)
-    
+
     # 4: Calculate CV VIS angles
-    CVstates = linear_interpolation(start_angles, end_angles)
-    
-    
+    CVstates, delta = linear_interpolation(start_angles, end_angles)
+    #input("old functioning?")
+
+
     # 5: Create string of VISs through coordinate pulling
-    create_string(startVIS, endVIS, CVstates)
+    create_string(startVIS, endVIS, CVstates, delta)
 
 
     return

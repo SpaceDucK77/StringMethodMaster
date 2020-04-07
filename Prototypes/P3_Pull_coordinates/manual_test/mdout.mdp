@@ -2,7 +2,7 @@
 ;	File 'mdout.mdp' was generated
 ;	By user: markopetrovic (501)
 ;	On host: Markos-MacBook-Pro.local
-;	At date: Sun Apr  5 22:52:44 2020
+;	At date: Tue Apr  7 11:52:50 2020
 ;
 ;	Created by:
 ;	                     :-) GROMACS - gmx grompp, 2020.1 (-:
@@ -11,7 +11,7 @@
 ;	Data prefix:  /usr/local/gromacs
 ;	Working dir:  /Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/P3_Pull_coordinates/manual_test
 ;	Command line:
-;	  gmx grompp -f md_pull_test.mdp -c start.gro -p topol.top -r start.gro -n index.ndx -o pull.tpr -maxwarn 1
+;	  gmx grompp -f md_pull_test.mdp -c confout.gro -p topol.top -r confout.gro -n index.ndx -o pull.tpr -maxwarn 1
 
 ; VARIOUS PREPROCESSING OPTIONS
 ; Preprocessor information: use cpp syntax.
@@ -25,15 +25,15 @@ integrator               = md
 ; Start time and timestep in ps
 tinit                    = 0
 dt                       = 0.002
-nsteps                   = 250000
+nsteps                   = 50000
 ; For exact run continuation or redoing part of a run
 init-step                = 0
 ; Part index is updated automatically on checkpointing (keeps files separate)
 simulation-part          = 1
 ; mode for center of mass motion removal
-comm-mode                = Linear
+comm_mode                = Angular
 ; number of steps for center of mass motion removal
-nstcomm                  = 10
+nstcomm                  = 1000
 ; group(s) for center of mass motion removal
 comm-grps                = 
 
@@ -59,11 +59,11 @@ rtpi                     = 0.05
 
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
-nstxout                  = 5000
-nstvout                  = 5000
+nstxout                  = 500
+nstvout                  = 500
 nstfout                  = 500
 ; Output frequency for energies to log file and energy file
-nstlog                   = 1000
+nstlog                   = 500
 nstcalcenergy            = 100
 nstenergy                = 500
 ; Output frequency and precision for .xtc file
@@ -78,25 +78,25 @@ energygrps               =
 
 ; NEIGHBORSEARCHING PARAMETERS
 ; cut-off scheme (Verlet: particle based cut-offs)
-cutoff-scheme            = Verlet
+cutoff-scheme            = verlet
 ; nblist update frequency
 nstlist                  = 20
 ; Periodic boundary conditions: xyz, no, xy
-pbc                      = xyz
-periodic-molecules       = no
+pbc                      = no
+periodic_molecules       = no
 ; Allowed energy error due to the Verlet buffer in kJ/mol/ps per atom,
 ; a value of -1 means: use rlist
 verlet-buffer-tolerance  = 0.005
 ; nblist cut-off        
-rlist                    = 1.4
+rlist                    = 0.0
 ; long-range cut-off for switched potentials
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
 ; Method for doing electrostatics
-coulombtype              = PME
+coulombtype              = Cut-off
 coulomb-modifier         = Potential-shift-Verlet
 rcoulomb-switch          = 0
-rcoulomb                 = 1.4
+rcoulomb                 = 0.0
 ; Relative dielectric constant for the medium and the reaction field
 epsilon-r                = 1
 epsilon-rf               = 0
@@ -105,9 +105,9 @@ vdw-type                 = Cut-off
 vdw-modifier             = Potential-shift-Verlet
 ; cut-off lengths       
 rvdw-switch              = 0
-rvdw                     = 1.4
+rvdw                     = 0.0
 ; Apply long range dispersion corrections for Energy and Pressure
-DispCorr                 = EnerPres
+DispCorr                 = No
 ; Extension of the potential lookup tables beyond the cut-off
 table-extension          = 1
 ; Separate tables between energy group pairs
@@ -115,12 +115,12 @@ energygrp-table          =
 ; Spacing for the PME/PPPM FFT grid
 fourierspacing           = 0.12
 ; FFT grid size, when a value is 0 fourierspacing will be used
-fourier_nx               = 0
-fourier_ny               = 0
-fourier_nz               = 0
+fourier-nx               = 0
+fourier-ny               = 0
+fourier-nz               = 0
 ; EWALD/PME/PPPM parameters
-pme_order                = 4
-ewald_rtol               = 1e-5
+pme-order                = 4
+ewald-rtol               = 1e-05
 ewald-rtol-lj            = 0.001
 lj-pme-comb-rule         = Geometric
 ewald-geometry           = 3d
@@ -129,25 +129,25 @@ implicit-solvent         = no
 
 ; OPTIONS FOR WEAK COUPLING ALGORITHMS
 ; Temperature coupling  
-Tcoupl                   = Nose-Hoover
+Tcoupl                   = v-rescale
 nsttcouple               = -1
 nh-chain-length          = 10
 print-nose-hoover-chain-variables = no
 ; Groups to couple separately
-tc_grps                  = Protein
+tc_grps                  = system
 ; Time constant (ps) and reference temperature (K)
-tau_t                    = 1.0
-ref_t                    = 310
+tau_t                    = 0.1
+ref_t                    = 300.000
 ; pressure coupling     
-Pcoupl                   = Parrinello-Rahman
-pcoupltype               = isotropic
+Pcoupl                   = no
+pcoupltype               = Isotropic
 nstpcouple               = -1
 ; Time constant (ps), compressibility (1/bar) and reference P (bar)
-tau_p                    = 1.0
-compressibility          = 4.5e-5
-ref_p                    = 1.0
+tau-p                    = 1
+compressibility          = 
+ref-p                    = 
 ; Scaling of reference coordinates, No, All or COM
-refcoord_scaling         = com
+refcoord-scaling         = No
 
 ; OPTIONS FOR QMMM calculations
 QMMM                     = no
@@ -186,13 +186,13 @@ annealing-temp           =
 
 ; GENERATE VELOCITIES FOR STARTUP RUN
 gen_vel                  = no
-gen-temp                 = 300
+gen_temp                 = 300.000
 gen-seed                 = -1
 
 ; OPTIONS FOR BONDS    
 constraints              = all-bonds
 ; Type of constraint algorithm
-constraint_algorithm     = lincs
+constraint-algorithm     = lincs
 ; Do not constrain the start configuration
 continuation             = yes
 ; Use successive overrelaxation to reduce the number of shake iterations
@@ -204,7 +204,7 @@ lincs-order              = 4
 ; Number of iterations in the final step of LINCS. 1 is fine for
 ; normal simulations, but use 2 to conserve energy in NVE runs.
 ; For energy minimization with constraints it should be 4 to 8.
-lincs-iter               = 1
+lincs_iter               = 4
 ; Lincs will write a warning to the stderr if in one step a bond
 ; rotates over more degrees than
 lincs-warnangle          = 30
@@ -266,9 +266,9 @@ pull-coord1-origin       = 0.0 0.0 0.0
 pull-coord1-vec          = 0.0 0.0 0.0
 pull_coord1_start        = yes
 pull-coord1-init         = 0
-pull_coord1_rate         = 0.001
-pull_coord1_k            = 0.001
-pull-coord1-kB           = 0.001
+pull_coord1_rate         = 0.1
+pull_coord1_k            = 1000
+pull-coord1-kB           = 1000
 pull_coord2_type         = umbrella
 pull-coord2-potential-provider = 
 pull_coord2_geometry     = dihedral
@@ -278,9 +278,9 @@ pull-coord2-origin       = 0.0 0.0 0.0
 pull-coord2-vec          = 0.0 0.0 0.0
 pull_coord2_start        = yes
 pull-coord2-init         = 0
-pull_coord2_rate         = 0.001
-pull_coord2_k            = 0.001
-pull-coord2-kB           = 0.001
+pull_coord2_rate         = 0.1
+pull_coord2_k            = 1000
+pull-coord2-kB           = 1000
 
 ; AWH biasing          
 awh                      = no

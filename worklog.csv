@@ -47,3 +47,9 @@ Date(YYMMDD);Start(HH:MM);Stop(HH:MM);Location;Activity;Comment
 200331;10:30;12:15;Home;VIS object limited specific MD-run capability;
 200331;13:00;15:30;Home;VIS object limited generalised MD-run capability, linear specific CV interpolation, status update;
 200403;15:00;18:00;Home;linear CV interpolation values done;
+200405;14:00;18:00;Home;steered simulation for Alanine Dipeptide;
+200406;09:00;11:00;Home;steered simulation for Alanine Dipeptide;
+200406;13:00;17:00;Home;steered .mdp bugfinding;
+200407;08:00;12:30;Home;steered .mdp bugfinding, weekly update and bugfixing;
+200407;13:00;15:30;Home;python adaptation of steered md simulation;
+200407;17:00;20:00;Home;Configuration extraction from trajectory;P3 doesn't need more code
