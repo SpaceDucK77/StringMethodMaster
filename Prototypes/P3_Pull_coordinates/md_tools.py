@@ -73,13 +73,11 @@ def normalise(cv_traj, intermediaries, start, delta):
     # normed = normalise(cv_traj, intermediaries, start, end, delta)
     traj = np.array(cv_traj)
     targets = np.array(intermediaries)
-    print(traj)
-    print(targets)
     start = np.array(start.collection)
     delta = np.array(delta)
     for i in range(len(delta)):
-        traj[i, :] = (traj[i, :] - start[i]) / delta[i]
-        targets[i, :] = (targets[i, :] - start[i]) / delta[i]
+        traj[:, i] = (traj[:, i] - start[i]) / delta[i]
+        targets[:, i] = (targets[:, i] - start[i]) / delta[i]
     return traj, targets
 
 
@@ -118,20 +116,19 @@ def get_angles(path = "", steps = 501):
     return(angles)
 
 def find_matches(trajectories, targets):
-    print(trajectories,targets, sep="\n")
-    distancses = np.ones_like(targets)*len(targets)
+    distances = np.ones(targets.shape[0]*len(targets))
     indexes = [None]*len(targets)
     j=0
     for i in range(len(trajectories)):
-        d1 = (trajectories[:, i] - targets[:, j])**2
-        d2 = (trajectories[:, i] - targets[:, j+1])**2
-        d3 = (trajectories[:, i] - targets[:, j+2])**2
+        d1 = np.sum((trajectories[i, :] - targets[j, :])**2)
+        d2 = np.sum((trajectories[i, :] - targets[j+1, :])**2)
+        d3 = np.sum((trajectories[i, :] - targets[j+2, :])**2)
         if distances[j] > d1:
             distances[j] = d1
             indexes[j] = i
         if distances[j+1] > d2:
             distances[j+1] = d2
-            indexes[j+1] = i       
+            indexes[j+1] = i
         if distances[j+2] > d3:
             distances[j+2] = d3
             indexes[j+2] = i

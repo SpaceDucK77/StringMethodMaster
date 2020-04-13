@@ -2,7 +2,7 @@
 ;	File 'mdout.mdp' was generated
 ;	By user: markopetrovic (501)
 ;	On host: Markos-MacBook-Pro.local
-;	At date: Tue Apr  7 19:46:45 2020
+;	At date: Wed Apr  8 10:08:17 2020
 ;
 ;	Created by:
 ;	                     :-) GROMACS - gmx grompp, 2020.1 (-:
@@ -11,7 +11,7 @@
 ;	Data prefix:  /usr/local/gromacs
 ;	Working dir:  /Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/P3_Pull_coordinates
 ;	Command line:
-;	  gmx grompp -f steered.mdp -c '/Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/P3_Pull_coordinates/mdrun_0_291996397_0/confout.gro' -p topol.top -r '/Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/P3_Pull_coordinates/mdrun_0_291996397_0/confout.gro' -n index.ndx -o steered.tpr
+;	  gmx grompp -f steered.mdp -c '/Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/P3_Pull_coordinates/mdrun_0_294532165_0/confout.gro' -p topol.top -r '/Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/P3_Pull_coordinates/mdrun_0_294532165_0/confout.gro' -n index.ndx -o steered.tpr
 
 ; VARIOUS PREPROCESSING OPTIONS
 ; Preprocessor information: use cpp syntax.

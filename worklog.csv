@@ -53,3 +53,8 @@ Date(YYMMDD);Start(HH:MM);Stop(HH:MM);Location;Activity;Comment
 200407;08:00;12:30;Home;steered .mdp bugfinding, weekly update and bugfixing;
 200407;13:00;15:30;Home;python adaptation of steered md simulation;
 200407;17:00;20:00;Home;Configuration extraction from trajectory;P3 doesn't need more code
+200408;08:00;13:00;Home;bugfixing for full run of steered simulation run;
+200408;13:30;18:00;Home;bi-weekly group meeting;Zoom
+200409;13:00;15:00;Home;prepared P4 directories and template files;
+200412;18:00;22:00;Moms;Created class for one swarm;
+200413;08:00;18:00;Moms;The program can now create a string and run a swarm off the first intermediary;Interrupted work time
