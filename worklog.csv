@@ -58,3 +58,6 @@ Date(YYMMDD);Start(HH:MM);Stop(HH:MM);Location;Activity;Comment
 200409;13:00;15:00;Home;prepared P4 directories and template files;
 200412;18:00;22:00;Moms;Created class for one swarm;
 200413;08:00;18:00;Moms;The program can now create a string and run a swarm off the first intermediary;Interrupted work time
+200414;09:00;15:15;Moms;Running swarms off of entire initial string;Bug creates identical CV values for later runs
+200415;08:00;18:00;Moms;Bugfinding: Bug was related to maximum number of back-up files allowed by gromacs;New problem: .itp-files claimed to be of wrong format, seem to match templates though
+200416;08:00;11:00;Moms;.itp error resolved. Template was out of date or just wrong;

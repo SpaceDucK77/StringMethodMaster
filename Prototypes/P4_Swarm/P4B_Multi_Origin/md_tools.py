@@ -5,14 +5,14 @@ import os
 import pickle
 import shutil
 
-CV_RES = {"define": ["-DPOSRES_CV"]}
+CV_RES = {"define": "-DPOSRES_CV"}
 ITP_HEADERS = {}
 ITP_WRITE = {}
 
 
 def append_dict(main, extra):
     for key in extra:
-        if key in ["include", "define"] and key in main:
+        if key in ["include"] and key in main:
             main[key].union(extra[key])
         main[key] = extra[key]
 
@@ -21,7 +21,7 @@ def append_dict(main, extra):
 def append_mdp(ordered_keys, all_parameters, name, all_keys, override = False):
     keys, parameters = read_mdp(name)
     for key in keys:
-        if key in ["include", "define"]:
+        if key in ["include"]:
             if key not in all_keys:
                 all_keys.add(key)
                 ordered_keys.append(key)
@@ -110,6 +110,7 @@ def get_angle(topology_file, index_file):
                                                       "-n": index_file},
                                        output_files = {"-oall": "temp.xvg"})
     angler.run()
+    print("get_angle:\n", angler.output.erroroutput.result())
     result = open("temp.xvg").read().split("\n")[-2]
     angles = result.split()[1:]
     #print(angles)
@@ -137,7 +138,7 @@ def get_cartesian(topology_file, atom_nos = None):
 def itp_write_dihedral(indexes, value, file):
     row = ["{:10}".format(i) for i in indexes]
     row = "".join(row)
-    row += "{:10}{:10}{:10}   0   1   2".format(1,1,value)+"\n"
+    row += "{:10}{:10}   0   1".format(1,value)+"\n"
     file.write(row)
 
 def itp_write_distance(indexes, vlaue, file):
@@ -175,7 +176,7 @@ def mdp_create(file_name, new_parameters = None, old_file = ""):      # for the 
         keys.append("\n;Custom_parameters\n")
         parameters["\n;Custom_parameters\n"] = ""
     for key in new_parameters.keys():
-        if key in ["include", "define"]:
+        if key in ["include"]:
             if key not in keys:
                 keys.insert(0, key)
                 parameters[key] = new_parameters[key]
@@ -188,7 +189,7 @@ def mdp_create(file_name, new_parameters = None, old_file = ""):      # for the 
             parameters[key] = new_parameters[key]
     file = open(file_name,"w")
     for key in keys:
-        if key not in ["include", "define"]:
+        if key not in ["include"]:
             value = parameters[key]
             if value == "":
                 file.write(key + "\n")
@@ -261,6 +262,6 @@ def update_topol_file(file_name = "topol.top"):
 
 ITP_WRITE["dihedral"] = itp_write_dihedral
 ITP_WRITE["distance"] = itp_write_distance
-ITP_HEADERS["dihedral"] = "; ai   aj   ak   al  type  label  phi  dphi  kfac  power"
+ITP_HEADERS["dihedral"] = "; ai   aj   ak   al  type  phi  dphi  kfac"
 if __name__ == "__main__":
     mdp_create("simple.mdp")
