@@ -1,3 +1,4 @@
 worklog.csv~
 Prototypes/**/*.trr
 Prototypes/**/#*.trr*
+Prototypes/**/mdrun_*
