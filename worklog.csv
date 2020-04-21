@@ -61,3 +61,6 @@ Date(YYMMDD);Start(HH:MM);Stop(HH:MM);Location;Activity;Comment
 200414;09:00;15:15;Moms;Running swarms off of entire initial string;Bug creates identical CV values for later runs
 200415;08:00;18:00;Moms;Bugfinding: Bug was related to maximum number of back-up files allowed by gromacs;New problem: .itp-files claimed to be of wrong format, seem to match templates though
 200416;08:00;11:00;Moms;.itp error resolved. Template was out of date or just wrong;
+200419;15:30;19:30;Moms;Extracted average drift from swarms;
+200420;08:00;20:20;Moms;Calculates new path and new CV values equidistantly along the path;
+200421;06:30;09:00;Moms;Steered updates to create new string from old states;
