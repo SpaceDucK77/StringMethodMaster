@@ -3,8 +3,11 @@
 # Date: 2020-04-13
 
 import numpy as np
+import matplotlib.pyplot as plt
 import VIS
 from md_tools import *
+
+
 class VIS_string:
     """ One string of VISs representing one iteration of the string method. """
     def __init__(self, start, end, string, no_CVs):
@@ -14,8 +17,10 @@ class VIS_string:
         self.cv_dim = no_CVs
         self.state = 0 # 0 = object created, 1 = string of origins created, 2 = swarms run
         self.SO = []
+        self.start_CVs = None
         self.end_loc = None
         self.new_CVs = None
+        self.get_CVs()
 
     def __str__(self):
         cvs = np.array([ swarm.averages() for swarm in self.SO])
@@ -29,19 +34,47 @@ class VIS_string:
             for i in range(len(self.SO)):
                 self.SO[i] = VIS_swarm(self.start_string[i])
             self.state = 1
-
+        
+            
     def get_CVs(self):
         #try:
         if self.new_CVs is not None:
             return self.new_CVs
+        elif self.start_CVs is not None:
+            return self.start_CVs
         #except AttributeError:
         #    self.new_CVs = None
         start_CVs = [vis.get_CVs() for vis in self.start_string]
-        return np.append(np.append([self.start.get_CVs()],
-                            start_CVs,
-                            axis = 0),
-                  [self.end.get_CVs()],
-                  axis =0 )
+        self.start_CVs = np.append(np.append([self.start.get_CVs()],
+                                             start_CVs,
+                                             axis = 0),
+                                   [self.end.get_CVs()],
+                                   axis =0 )
+        return self.start_CVs
+
+    ''' def get_CV_start(self):
+        #try:
+        if self.start_CVs is not None:
+            return self.start_CVs
+        #except AttributeError:
+        #    self.new_CVs = None
+        start_CVs = [vis.get_CVs() for vis in self.start_string]
+        self.start_CVs = np.append(np.append([self.start.get_CVs()],
+                                             start_CVs,
+                                             axis = 0),
+                                   [self.end.get_CVs()],
+                                   axis =0 )
+        return self.start_CVs'''
+
+    def plot_CVs_2D(self, plotwindow, CV_index = (0,1), label = "A string"):
+        #self.get_CV_start()
+        p= plotwindow.plot(self.start_CVs[1:-1, CV_index[0]],
+                           self.start_CVs[1:-1, CV_index[1]],"x")
+        plotwindow.plot(self.start_CVs[:, CV_index[0]],
+                        self.start_CVs[:, CV_index[1]],
+                        p[0].get_color(),
+                        label = label)
+        
 
     def prep_new_CVs(self, redo = False):
         if self.state == 2 or (redo and self.state > 2):
@@ -56,18 +89,23 @@ class VIS_string:
 
     def prep_new_string(self):
         if self.state == 3:
+            old_CVs = [self.start.get_CVs()]
             new_string = [VIS.VIS.fresh_copy(old_state) for old_state in self.start_string]
             nsteps = 1000
             for i,fresh_copy in enumerate(new_string):
                 parameters ={}
                 parameters["nsteps"] = "{:10}; {}".format(nsteps, str(nsteps * 0.002) +" ps")
                 old = self.start_string[i].get_CVs()
+                old_CVs.append(old)
                 for j in range(self.cv_dim):
                     delta = self.new_CVs[i+1,j] - old[j]
                     parameters["pull_coord" + str(j + 1) + "_rate"] = delta * 0.002 / nsteps
                     parameters["pull_coord" + str(j + 1) + "_k"] = 2000
                 fresh_copy.steered(parameters)
-        return VIS_string(self.start, self.end, new_string, self.cv_dim)
+            old_CVs.append(self.end.get_CVs())
+            old_CVs = np.array(old_CVs)
+            distance = np.linalg.norm(self.new_CVs - old_CVs)
+        return distance, VIS_string(self.start, self.end, new_string, self.cv_dim)
 
     def run_swarms(self, redo = False):
         if self.state == 1 or (redo and self.state > 1):
