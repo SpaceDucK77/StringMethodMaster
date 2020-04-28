@@ -1,5 +1,5 @@
-# Prototype 4
-# Preparing a string of Virtual Initial States(VIS) for MD-runs
+# Prototype 8
+# Visualising a string method run.
 # By: Marko Petrovic
 # Date: 2020-04-12
 
@@ -133,19 +133,10 @@ def p5_run(saves):
     return(saves)
 
 def p7_run(saves = None):
-    #reuse = input("use previous run (y/n)")=="y"
-    reuse = True
-    #reuse = True
-    debug = True
-    #debug = False
-    if reuse:
-        saves = load()
-    else:
-        saves = {}
     saves = p5_run(saves)
     if "iterations" not in saves:
         print("calculating new strings")
-        iterations = [saves["second_string"]]
+        iterations = [saves["first_string"], saves["second_string"]]
         distances = [saves["dist"]]
         dist = distances[-1]
         i = 0
@@ -160,15 +151,55 @@ def p7_run(saves = None):
         saves["iterations"] = iterations
         saves["distances"] = distances
         save(saves)
+    return saves
+
+
+def p8_run(saves = None):
+    #reuse = input("use previous run (y/n)")=="y"
+    reuse = True
+    #reuse = True
+    debug = True
+    #debug = False
+    if reuse:
+        saves = load()
+    else:
+        saves = {}
+    saves = p7_run(saves)
+    if not os.path.isdir("plots"):
+        os.mkdir("plots")
     sa = saves["start_angles"]
     ea = saves["end_angles"]
     phie = np.array([sa[0], ea[0]])
     psie = np.array([sa[1], ea[1]])
     #plt.plot(phi,psi)
     
-    # istates = np.array(saves["CVstates"])
+    istates = np.array(saves["CVstates"])
     save(saves)
     #input("end")
+    '''
+    plot_iterations_2D(phie,
+                       psie,
+                       istates,
+                       saves["iterations"],
+                       spdim = (2, 3),
+                       select = 0,
+                       savedir = "plots")
+    plot_iter_splines_2D(phie,
+                         psie,
+                         istates,
+                         saves["iterations"],
+#                         select = 0,
+                         select = list(range(len(saves["iterations"]))),
+                         ppf = 2,
+                         savedir = "plots")
+    save(saves)'''
+    frame = create_panda(sa,
+                         ea,
+                         istates,
+                        saves["iterations"],
+                         ("phi", "psi"),
+                         "plots")
+    plot_sim_par_coords(frame)
     
 if __name__ == "__main__":
-    p7_run()
+    p8_run()

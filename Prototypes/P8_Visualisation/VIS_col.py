@@ -68,23 +68,55 @@ class VIS_string:
 
     def plot_CVs_2D(self, plotwindow, CV_index = (0,1), label = "A string"):
         #self.get_CV_start()
-        p= plotwindow.plot(self.start_CVs[1:-1, CV_index[0]],
-                           self.start_CVs[1:-1, CV_index[1]],"x")
+        p = plotwindow.plot(self.start_CVs[1:-1, CV_index[0]],
+                            self.start_CVs[1:-1, CV_index[1]],"x")
         plotwindow.plot(self.start_CVs[:, CV_index[0]],
                         self.start_CVs[:, CV_index[1]],
                         p[0].get_color(),
                         label = label)
-        
 
+    def plot_spline_curve(self, plotwindow, CV_index = (0, 1), label = "A string"):
+        if "spline_data" not in dir(self) and self.state > 1:
+            state = self.state
+            if state == 2:
+                state = 3
+            self.prep_new_CVs(redo = True)
+            self.state = state
+        elif self.state < 2:
+            print("error label: " + label)
+            return None
+        splines = self.spline_data[0]
+        mins = self.spline_data[1]
+        deltas = self.spline_data[2]
+        states = len(self.SO) + 1
+        t = np.linspace(0, states, 200)
+        xdim = CV_index[0]
+        ydim = CV_index[1]
+        x = splines[xdim](t) * deltas[xdim] + mins[xdim]
+        y = splines[ydim](t) * deltas[ydim] + mins[ydim]
+        p = plotwindow.plot(x,
+                            y,
+                            label = "spline: " + label)
+        plotwindow.plot(self.drift_CVs[1:-1, xdim],
+                        self.drift_CVs[1:-1, ydim], "o", 
+                        color = p[0].get_color(),
+                        label = "drift_CVs: " + label)
+        plotwindow.plot(self.new_CVs[1:-1, xdim],
+                        self.new_CVs[1:-1, ydim], "v",
+                        color = p[0].get_color(),
+                        label = "new_CVs: " + label)
+        plotwindow.plot(self.start_CVs[:, xdim],
+                        self.start_CVs[:, ydim],
+                        label = "start_CVs: " + label)
     def prep_new_CVs(self, redo = False):
         if self.state == 2 or (redo and self.state > 2):
             print("Calculating CV values for new string")
-            old_path =  np.append(np.append([self.start.get_CVs()],
+            self.drift_CVs =  np.append(np.append([self.start.get_CVs()],
                                             self.end_loc,
                                             axis = 0),
                                   [self.end.get_CVs()],
                                   axis =0 )
-            self.new_CVs = reparameterise(old_path)
+            self.new_CVs, *self.spline_data = reparameterise(self.drift_CVs)
             self.state = 3
 
     def prep_new_string(self):

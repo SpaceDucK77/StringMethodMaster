@@ -1,8 +1,10 @@
 import gmxapi as gmx
 import numpy as np
-import matplotlib.pyplotas plt
+import matplotlib.pyplot as plt
+import pandas as pd
 import scipy.interpolate as interp
 import scipy.integrate as integr
+import plotly.express as px
 import VIS
 import os
 import pickle
@@ -46,6 +48,39 @@ def calc_splines(CVs):
     for i in range(CVs.shape[1]):
         polys.append(interp.CubicSpline(t,CVs[:,i],bc_type = 'natural'))
     return polys
+
+def create_panda(start,
+                 end,
+                 init_states,
+                 iterations,
+                 CV_names,
+                 savedir,
+                 CV_index = ()):
+    if CV_index == ():
+        CV_index = tuple(range(len(CV_names) + 2))
+    else:
+        CV_index = tuple([0, 1] + [index + 2 for index in CV_index])
+    set_length = (len(init_states) + 2)
+    base = np.zeros(((len(iterations) + 1) * set_length, len(CV_names) + 2))
+    base[:set_length, 0] = np.ones((set_length))
+    base[:set_length, 1] = np.array(list(range(set_length))).T
+    base[:set_length, 2:] = np.append([start],
+                                      np.append(init_states,
+                                                [end],
+                                                axis = 0),
+                                      axis = 0)
+    for i in range(len(iterations)):
+        j = i+1
+        base[j * set_length : (j + 1) * set_length, 0] = (j + 1) * np.ones((set_length))
+        base[j * set_length : (j + 1) * set_length, 1] = np.array(list(range(set_length))).T
+        base[j * set_length : (j + 1) * set_length, 2:] = iterations[i].get_CVs()
+    dict_base = {}
+    names = ["Iter", "VISno"] + list(CV_names)
+    for index in CV_index:
+        dict_base[names[index]] = base[:,index]
+    frame = pd.DataFrame(dict_base)
+    frame = frame[names]
+    return frame
 
 def create_string(start, end, intermediaries, delta, saves):
     starter = VIS.VIS.fresh_copy(start)
@@ -246,30 +281,90 @@ def normalise_lin(cv_traj, intermediaries, start, delta):
         targets[:, i] = (targets[:, i] - start[i]) / delta[i]
     return traj, targets
 
-def plot_iterations_2D(init_states, iterations CV_indexes = (0, 1)):
+def plot_iterations_2D(phie,
+                       psie,
+                       init_states,
+                       iterations,
+                       CV_index = (0, 1),
+                       spdim = (2, 3),
+                       select = 0,
+                       savedir = None):
+    iters = len(iterations)
     plt.plot(phie,psie,"ro-", label = "Initial")
     plt.plot(init_states[:, 0], init_states[:, 1], "x")
     for i,string in enumerate(iterations[::5]):
-        string.plot_CVs_2D(plt, label = str(i*5+1))
+        string.plot_CVs_2D(plt,
+                           CV_index = CV_index,
+                           label = str(i*5+1))
     plt.xlabel("phi")
     plt.ylabel("psi")
     plt.title("Every fifth iteration, linear interpolation")
     plt.legend()
+    if savedir != None:
+        plt.savefig(savedir+"/every5iterations.png",
+                    dpi = 300)
+
+    
+    subplots = spdim[0] * spdim[1]
+    ppf = iters // subplots # ppf: plots per figure
 
     plt.figure()
-    for i in range(6):
-        plt.subplot(231+i)
+    for i in range(subplots):
+        plt.subplot(spdim[0], spdim[1], 1+i)
         plt.plot(phie,psie,"ro-", label = "Initial")
-        plt.plot(istates[:, 0], istates[:, 1], "x")
-        for j in range(5*i,5*(i+1)):
+        plt.plot(init_states[:, 0], init_states[:, 1], "x")
+        for j in range(ppf*i,ppf*(i+1)):
             string = iterations[j]
-            string.plot_CVs_2D(plt, label = str(j+1))
-        plt.title("Iterations " + str(5 * i + 1) + " to " + str(5 * (i + 1)))
+            string.plot_CVs_2D(plt,
+                               CV_index = CV_index,
+                               label = str(j+1))
+        plt.title("Iterations " + str(ppf * i + 1) + " to " + str(ppf * (i + 1)))
         plt.xlabel("phi")
         plt.ylabel("psi")
         plt.legend()
-    plt.show()
+    if savedir != None:
+        plt.savefig(savedir+"/iterations" + str(1) + "To" + str(subplots * ppf) + ".png",
+                    dpi = 300)
+    if savedir == None:
+        plt.show()
 
+def plot_iter_splines_2D(phie,
+                         psie,
+                         init_states,
+                         iterations,
+                         CV_index = (0, 1),
+                         select = 0,
+                         ppf = 1,
+                         savedir = None):
+    iters = len(iterations)
+    if select is 0:
+        select = range(iters)
+    for i in select:
+        if i % ppf == 0:
+            plt.figure()
+            plt.plot(phie,psie,"ro-", label = "Initial", color = 'k')
+            plt.plot(init_states[:, 0], init_states[:, 1], "x")
+        string = iterations[i]
+        string.plot_spline_curve(plt,
+                                 CV_index = CV_index,
+                                 label = str(i+1))
+        if (i - 1) % ppf == 0:
+            plt.xlabel("phi")
+            plt.ylabel("psi")
+            plt.title("Iterations: " + str(i)+ "to " + str(i + ppf - 1))
+            plt.legend()
+    
+            if savedir != None:
+                plt.savefig(savedir+"/Spline2DIter" + str(i) + "To" + str(i + ppf - 1) + ".png",
+                            dpi = 300)
+    if savedir == None:
+        plt.show()
+
+def plot_sim_par_coords(panda_frame):
+    fig = px.parallel_coordinates(panda_frame)
+    # fig = px.parallel_coordinates
+    fig.show()
+                               
 
 def read_mdp(file_name):
     file =  open(file_name)
@@ -328,7 +423,7 @@ def reparameterise(CVs):
     splines = calc_splines(norm_CVs)
     new_norm_CVs = reparam_norm_cvs(splines, CVs.shape[0])
     new_CVs = denormalise(new_norm_CVs, mins, deltas)
-    return new_CVs
+    return new_CVs, splines, mins, deltas
 
 def save(data, file_name = "debug.pickle"):
     pickle.dump(data,open(file_name, "wb"))
