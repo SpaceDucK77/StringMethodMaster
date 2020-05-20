@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.interpolate as interp
 import scipy.integrate as integr
-import plotly.express as px
+#import plotly.express as px
 import VIS
 import os
 import pickle
@@ -571,6 +571,7 @@ def plot_iter_splines_2D(phie,
         plt.show()
 
 def plot_sim_par_coords(panda_frame, savedir = None):
+    import plotly.express as px
     fig = px.parallel_coordinates(panda_frame, color = "VISno")
     # fig = px.parallel_coordinates
     if savedir == None:

@@ -2,3 +2,6 @@ worklog.csv~
 Prototypes/**/*.trr
 Prototypes/**/#*.trr*
 Prototypes/**/mdrun_*
+.idea
+.idea/*
+.idea/vcs.xml

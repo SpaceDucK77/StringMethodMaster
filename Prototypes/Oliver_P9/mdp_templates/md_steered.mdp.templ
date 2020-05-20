@@ -7,17 +7,19 @@ dt          = 0.002
 ;***
 tinit       = 0
 
-nsteps      = 250000    ; 500 ps
+nsteps      = 25000000    ; 50 ns
 
 ;***
 nstcomm     = 10 ;COM motion removal???
 
 ; Output parameters ***
-nstxout     = 5000      ; every 10 ps Number of STeps between writing coordinates
-nstvout     = 5000      ; Number of STeps between writing velocities
-nstfout     = 500       ; Number of STeps between writing forces
-nstxtcout   = 500       ; every 1 ps ** not in documentation
-nstenergy   = 500       ; Number of STeps between writing energies
+nstxtcout = 250000
+nstlog = 250000
+nstxout = 0
+nstvout = 0
+nstfout = 0
+nstcalcenergy = 100
+nstenergy = 0
 
 ; Bond parameters
 constraint_algorithm    = lincs
