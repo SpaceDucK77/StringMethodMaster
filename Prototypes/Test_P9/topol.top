@@ -231,12 +231,9 @@ Other               3
 
 [ system ]
 ; Name
-GROningen Mixture of Alchemy and Childrens' Stories
+GROningen Mixture of Alchemy and Childrens' Stories in water
 
 [ molecules ]
 ; Compound        #mols
 Other               1
-
-#ifdef POSRES_CV
-#include "cv_restraints.itp"
-#endif
+SOL              5536
