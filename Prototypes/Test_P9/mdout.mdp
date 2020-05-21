@@ -2,7 +2,7 @@
 ;	File 'mdout.mdp' was generated
 ;	By user: markopetrovic (501)
 ;	On host: Markos-MBP.lan
-;	At date: Wed May 20 13:18:24 2020
+;	At date: Thu May 21 13:21:39 2020
 ;
 ;	Created by:
 ;	                     :-) GROMACS - gmx grompp, 2020.1 (-:
@@ -11,21 +11,21 @@
 ;	Data prefix:  /usr/local/gromacs
 ;	Working dir:  /Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/Test_P9
 ;	Command line:
-;	  gmx grompp -f npt.mdp -c '/Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/Test_P9/mdrun_26_323384613_0/confout.gro' -p topol.top -t '/Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/Test_P9/mdrun_26_323384613_0/state.cpt' -r '/Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/Test_P9/mdrun_26_323384613_0/confout.gro' -n index.ndx -o npt.tpr
+;	  gmx grompp -f steered.mdp -c '/Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/Test_P9/mdrun_7504_497766057_0/confout.gro' -p topol.top -r '/Users/markopetrovic/Box Sync/Egenstudier/Åk5/P3/Ex-Jobb/StringMethodMaster/Prototypes/Test_P9/mdrun_7504_497766057_0/confout.gro' -n index.ndx -o steered.tpr
 
 ; VARIOUS PREPROCESSING OPTIONS
 ; Preprocessor information: use cpp syntax.
 ; e.g.: -I/home/joe/doe -I/home/mary/roe
 include                  = 
 ; e.g.: -DPOSRES -DFLEXIBLE (note these variable names are case sensitive)
-define                   = -DPOSRES
+define                   = 
 
 ; RUN CONTROL PARAMETERS
 integrator               = md
 ; Start time and timestep in ps
 tinit                    = 0
 dt                       = 0.002
-nsteps                   = 50000
+nsteps                   = 1000
 ; For exact run continuation or redoing part of a run
 init-step                = 0
 ; Part index is updated automatically on checkpointing (keeps files separate)
@@ -33,7 +33,7 @@ simulation-part          = 1
 ; mode for center of mass motion removal
 comm-mode                = Linear
 ; number of steps for center of mass motion removal
-nstcomm                  = 100
+nstcomm                  = 10
 ; group(s) for center of mass motion removal
 comm-grps                = 
 
@@ -59,15 +59,15 @@ rtpi                     = 0.05
 
 ; OUTPUT CONTROL OPTIONS
 ; Output frequency for coords (x), velocities (v) and forces (f)
-nstxout                  = 500
-nstvout                  = 500
-nstfout                  = 0
+nstxout                  = 5000
+nstvout                  = 5000
+nstfout                  = 500
 ; Output frequency for energies to log file and energy file
-nstlog                   = 500
+nstlog                   = 1000
 nstcalcenergy            = 100
 nstenergy                = 500
 ; Output frequency and precision for .xtc file
-nstxout-compressed       = 0
+nstxout-compressed       = 500
 compressed-x-precision   = 1000
 ; This selects the subset of atoms for the compressed
 ; trajectory file. You can select multiple groups. By
@@ -80,7 +80,7 @@ energygrps               =
 ; cut-off scheme (Verlet: particle based cut-offs)
 cutoff-scheme            = Verlet
 ; nblist update frequency
-nstlist                  = 10
+nstlist                  = 20
 ; Periodic boundary conditions: xyz, no, xy
 pbc                      = xyz
 periodic-molecules       = no
@@ -88,7 +88,7 @@ periodic-molecules       = no
 ; a value of -1 means: use rlist
 verlet-buffer-tolerance  = 0.005
 ; nblist cut-off        
-rlist                    = 1
+rlist                    = 1.4
 ; long-range cut-off for switched potentials
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
@@ -96,7 +96,7 @@ rlist                    = 1
 coulombtype              = PME
 coulomb-modifier         = Potential-shift-Verlet
 rcoulomb-switch          = 0
-rcoulomb                 = 1.0
+rcoulomb                 = 1.4
 ; Relative dielectric constant for the medium and the reaction field
 epsilon-r                = 1
 epsilon-rf               = 0
@@ -105,7 +105,7 @@ vdw-type                 = Cut-off
 vdw-modifier             = Potential-shift-Verlet
 ; cut-off lengths       
 rvdw-switch              = 0
-rvdw                     = 1.0
+rvdw                     = 1.4
 ; Apply long range dispersion corrections for Energy and Pressure
 DispCorr                 = EnerPres
 ; Extension of the potential lookup tables beyond the cut-off
@@ -113,14 +113,14 @@ table-extension          = 1
 ; Separate tables between energy group pairs
 energygrp-table          = 
 ; Spacing for the PME/PPPM FFT grid
-fourierspacing           = 0.16
+fourierspacing           = 0.12
 ; FFT grid size, when a value is 0 fourierspacing will be used
-fourier-nx               = 0
-fourier-ny               = 0
-fourier-nz               = 0
+fourier_nx               = 0
+fourier_ny               = 0
+fourier_nz               = 0
 ; EWALD/PME/PPPM parameters
 pme_order                = 4
-ewald-rtol               = 1e-05
+ewald_rtol               = 1e-5
 ewald-rtol-lj            = 0.001
 lj-pme-comb-rule         = Geometric
 ewald-geometry           = 3d
@@ -129,23 +129,23 @@ implicit-solvent         = no
 
 ; OPTIONS FOR WEAK COUPLING ALGORITHMS
 ; Temperature coupling  
-tcoupl                   = V-rescale
+Tcoupl                   = Nose-Hoover
 nsttcouple               = -1
 nh-chain-length          = 10
 print-nose-hoover-chain-variables = no
 ; Groups to couple separately
-tc-grps                  = Protein Non-Protein
+tc_grps                  = Protein
 ; Time constant (ps) and reference temperature (K)
-tau_t                    = 0.1     0.1
-ref_t                    = 300     300
+tau_t                    = 1.0
+ref_t                    = 310
 ; pressure coupling     
-pcoupl                   = Parrinello-Rahman
-pcoupltype               = isotropic
+pcoupl                   = No
+pcoupltype               = Isotropic
 nstpcouple               = -1
 ; Time constant (ps), compressibility (1/bar) and reference P (bar)
-tau_p                    = 2.0
-compressibility          = 4.5e-5
-ref_p                    = 1.0
+tau-p                    = 1
+compressibility          = 
+ref-p                    = 
 ; Scaling of reference coordinates, No, All or COM
 refcoord_scaling         = com
 
@@ -190,7 +190,7 @@ gen-temp                 = 300
 gen-seed                 = -1
 
 ; OPTIONS FOR BONDS    
-constraints              = h-bonds
+constraints              = all-bonds
 ; Type of constraint algorithm
 constraint_algorithm     = lincs
 ; Do not constrain the start configuration
@@ -200,11 +200,11 @@ Shake-SOR                = no
 ; Relative tolerance of shake
 shake-tol                = 0.0001
 ; Highest order in the expansion of the constraint coupling matrix
-lincs_order              = 4
+lincs-order              = 4
 ; Number of iterations in the final step of LINCS. 1 is fine for
 ; normal simulations, but use 2 to conserve energy in NVE runs.
 ; For energy minimization with constraints it should be 4 to 8.
-lincs_iter               = 1
+lincs-iter               = 1
 ; Lincs will write a warning to the stderr if in one step a bond
 ; rotates over more degrees than
 lincs-warnangle          = 30
@@ -238,9 +238,9 @@ pull-pbc-ref-prev-step-com = no
 pull-xout-average        = no
 pull-fout-average        = no
 ; Number of pull groups 
-pull_ngroups             = 7
+pull_ngroups             = 5
 ; Number of pull coordinates
-pull_ncoords             = 4
+pull_ncoords             = 2
 ; Group and coordinate parameters
 pull_group1_name         = grp_a1
 pull-group1-weights      = 
@@ -257,12 +257,6 @@ pull-group4-pbcatom      = 0
 pull_group5_name         = grp_a5
 pull-group5-weights      = 
 pull-group5-pbcatom      = 0
-pull_group6_name         = grp_a6
-pull-group6-weights      = 
-pull-group6-pbcatom      = 0
-pull_group7_name         = grp_a7
-pull-group7-weights      = 
-pull-group7-pbcatom      = 0
 pull_coord1_type         = umbrella
 pull-coord1-potential-provider = 
 pull_coord1_geometry     = dihedral
@@ -272,9 +266,9 @@ pull-coord1-origin       = 0.0 0.0 0.0
 pull-coord1-vec          = 0.0 0.0 0.0
 pull_coord1_start        = yes
 pull-coord1-init         = 0
-pull_coord1_rate         = 0
-pull_coord1_k            = 1000
-pull-coord1-kB           = 1000
+pull_coord1_rate         = 1.451549981667722e-05
+pull_coord1_k            = 2000
+pull-coord1-kB           = 2000
 pull_coord2_type         = umbrella
 pull-coord2-potential-provider = 
 pull_coord2_geometry     = dihedral
@@ -284,33 +278,9 @@ pull-coord2-origin       = 0.0 0.0 0.0
 pull-coord2-vec          = 0.0 0.0 0.0
 pull_coord2_start        = yes
 pull-coord2-init         = 0
-pull_coord2_rate         = 0
-pull_coord2_k            = 1000
-pull-coord2-kB           = 1000
-pull_coord3_type         = umbrella
-pull-coord3-potential-provider = 
-pull_coord3_geometry     = dihedral
-pull_coord3_groups       = 3 4 4 5 5 6
-pull_coord3_dim          = Y Y Y
-pull-coord3-origin       = 0.0 0.0 0.0
-pull-coord3-vec          = 0.0 0.0 0.0
-pull_coord3_start        = yes
-pull-coord3-init         = 0
-pull_coord3_rate         = 0
-pull_coord3_k            = 1000
-pull-coord3-kB           = 1000
-pull_coord4_type         = umbrella
-pull-coord4-potential-provider = 
-pull_coord4_geometry     = dihedral
-pull_coord4_groups       = 4 5 5 6 6 7
-pull_coord4_dim          = Y Y Y
-pull-coord4-origin       = 0.0 0.0 0.0
-pull-coord4-vec          = 0.0 0.0 0.0
-pull_coord4_start        = yes
-pull-coord4-init         = 0
-pull_coord4_rate         = 0
-pull_coord4_k            = 1000
-pull-coord4-kB           = 1000
+pull_coord2_rate         = -1.8099935576086794e-05
+pull_coord2_k            = 2000
+pull-coord2-kB           = 2000
 
 ; AWH biasing          
 awh                      = no

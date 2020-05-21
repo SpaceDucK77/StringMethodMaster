@@ -236,3 +236,7 @@ GROningen Mixture of Alchemy and Childrens' Stories
 [ molecules ]
 ; Compound        #mols
 Other               1
+
+#ifdef POSRES_CV
+#include "cv_restraints.itp"
+#endif
