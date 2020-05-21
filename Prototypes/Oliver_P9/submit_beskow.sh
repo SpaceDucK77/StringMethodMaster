@@ -10,7 +10,7 @@
 #SBATCH --ntasks-per-node=32
 
 # length in hours
-#SBATCH -t 00:59:59
+#SBATCH -t 00:09:59
 
 # Receive e-mails when your job starts and ends
 #SBATCH --mail-user=oliver.fleetwood@scilifelab.se --mail-type=FAIL
@@ -25,7 +25,9 @@ export OMP_NUM_THREADS=1
 export GMX_MAXBACKUP=-1
 echo "LOADED MODULES"
 
-source activate
+cmd="conda activate /cfs/klemming/nobackup/o/oliverfl/py37"
+echo $cmd
+$cmd
 cmd="srun -n 1 python VIS_col.py"
 echo $cmd
 $cmd
