@@ -138,7 +138,7 @@ class VIS_collection:
 
     def parse_CVs(self, text):
         COM_group_no = {}
-        current_pg_no = 1
+        current_pg_no = 0
         self.CVs={"dihedrals": [], "distances": []}
         divide = text.split("[ dihedrals ]")
         COM_group_text = divide[0]

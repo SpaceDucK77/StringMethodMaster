@@ -10,7 +10,7 @@
 #SBATCH --ntasks-per-node=32
 
 # length in hours
-#SBATCH -t 00:09:59
+#SBATCH -t 00:29:59
 
 # Receive e-mails when your job starts and ends
 #SBATCH --mail-user=oliver.fleetwood@scilifelab.se --mail-type=FAIL
@@ -18,6 +18,21 @@
 # Output file names for stdout and stderr
 #SBATCH -e error.log
 #SBATCH -o output.log
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/pdc/vol/anaconda/2019.03/py37/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/pdc/vol/anaconda/2019.03/py37/etc/profile.d/conda.sh" ]; then
+        . "/pdc/vol/anaconda/2019.03/py37/etc/profile.d/conda.sh"
+    else
+        export PATH="/pdc/vol/anaconda/2019.03/py37/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
 
 module swap PrgEnv-cray PrgEnv-gnu
 module load gromacs/2020.1
