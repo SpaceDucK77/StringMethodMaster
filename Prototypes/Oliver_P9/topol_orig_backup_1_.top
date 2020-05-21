@@ -30,7 +30,3 @@ POPC  	         180
 TIP3  	       14283
 SOD   	          38
 CLA   	          42
-
-#ifdef POSRES_CV
-#include "cv_restraints.itp"
-#endif
