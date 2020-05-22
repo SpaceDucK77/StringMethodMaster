@@ -1,0 +1,35 @@
+# This file was created Fri May 22 11:32:16 2020
+# Created by:
+#                      :-) GROMACS - gmx mdrun, 2020.1 (-:
+# 
+# Executable:   /pdc/vol/gromacs/2020.1/bin/gmx
+# Data prefix:  /pdc/vol/gromacs/2020.1
+# Working dir:  /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9
+# Command line:
+#   gmx mdrun -s nvt.tpr
+# gmx mdrun is part of G R O M A C S:
+#
+# Good ROcking Metal Altar for Chronical Sinners
+#
+@    title "Pull force"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "Force (kJ/mol/nm)"
+@TYPE xy
+@ view 0.15, 0.15, 0.75, 0.85
+@ legend on
+@ legend box on
+@ legend loctype view
+@ legend 0.78, 0.8
+@ legend length 2
+@ s0 legend "1"
+@ s1 legend "2"
+@ s2 legend "3"
+@ s3 legend "4"
+@ s4 legend "5"
+0.0000	-0.00878549	0.0562408	0.0522815	0.000603937	-0.00844009
+0.1000	1.48167	2.38193	17.1616	4.59698	28.6825
+0.2000	7.56654	-9.12616	20.816	12.2685	26.8751
+0.3000	13.4079	-11.9632	31.8392	-1.50358	26.5863
+0.4000	-3.43563	-16.8336	19.2672	11.4578	-1.89254
+0.5000	-13.2029	-10.5385	4.9831	-4.18772	13.9033
+0.6000	-16.6168	-3.28474	21.1097	13.5575	5.83917

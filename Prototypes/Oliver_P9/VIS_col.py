@@ -261,7 +261,7 @@ class VIS_collection:
                 self.startVIS.solvate()
                 self.solvated = 1
                 self.startVIS.ions()
-            self.startVIS.EM(restrain_cv = True)
+            #self.startVIS.EM(restrain_cv = True)
             if self.solvated:
                 print("-------- NVT --------")
                 self.startVIS.nvt()

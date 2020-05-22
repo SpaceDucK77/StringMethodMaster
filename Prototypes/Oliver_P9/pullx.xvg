@@ -1,0 +1,35 @@
+# This file was created Fri May 22 11:32:16 2020
+# Created by:
+#                      :-) GROMACS - gmx mdrun, 2020.1 (-:
+# 
+# Executable:   /pdc/vol/gromacs/2020.1/bin/gmx
+# Data prefix:  /pdc/vol/gromacs/2020.1
+# Working dir:  /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9
+# Command line:
+#   gmx mdrun -s nvt.tpr
+# gmx mdrun is part of G R O M A C S:
+#
+# Gromacs Runs One Microsecond At Cannonball Speeds
+#
+@    title "Pull COM"
+@    xaxis  label "Time (ps)"
+@    yaxis  label "Position (nm)"
+@TYPE xy
+@ view 0.15, 0.15, 0.75, 0.85
+@ legend on
+@ legend box on
+@ legend loctype view
+@ legend 0.78, 0.8
+@ legend length 2
+@ s0 legend "1"
+@ s1 legend "2"
+@ s2 legend "3"
+@ s3 legend "4"
+@ s4 legend "5"
+0.0000	1.11411	2.15087	2.92042	2.43827	0.922281
+0.1000	1.11262	2.14855	2.90331	2.43367	0.89359
+0.2000	1.10653	2.16005	2.89965	2.426	0.895398
+0.3000	1.10069	2.16289	2.88863	2.43977	0.895686
+0.4000	1.11753	2.16776	2.9012	2.42681	0.924165
+0.5000	1.1273	2.16147	2.91549	2.44246	0.908369
+0.6000	1.13072	2.15421	2.89936	2.42471	0.916434
