@@ -14,7 +14,7 @@ P_FILE_DICT = {"name": ("name", str),
                "topology_file": ("topology", str),
                "struct_index": ("index", str),
                "solvated": ("solvated", int),
-               "solvate": ("solvate", int), 
+               "solvate": ("solvate", int),
                "max_iter": ("iterations", int),
                "max_conv": ("conv_limit", float),
                "beads": ("beads", int)}
@@ -30,7 +30,7 @@ class Pull_group(frozenset):
         self.pg_no = pg_no
         self.name = ""
         self.__set_name()
-        
+
 
     def add_COM_group_number(self, number):
         self.COM_group_numbers.add(number)
@@ -41,7 +41,7 @@ class Pull_group(frozenset):
     def index_add(self):
         return "[ " + self.name + " ]\n" +\
             " ".join([str(i) for i in sorted(self)])
-        
+
     def __set_name(self):
         self.name = "grp_"
         if len(self) == 1:
@@ -61,7 +61,7 @@ class CV:
     def get_name(self):
         return self.name
 
-    
+
 class Dihedral(CV):
 
     def __init__(self, pull_groups):
@@ -75,7 +75,7 @@ class Dihedral(CV):
 
     def mdp_groups(self):
         return " ".join([str(pg) for pg in [self.pull_groups[cv].pg_no for cv in [0, 1, 1, 2, 2, 3]]])
-    
+
 class Distance(CV):
 
     def __init__(self, pull_groups):
@@ -83,11 +83,11 @@ class Distance(CV):
 
     def geometry(self):
         return "dihedral"
-    
+
     def mdp_groups(self):
         return str(self.pull_groups[0].pg_no) + " " + str(self.pull_groups[1].pg_no)
 
-    
+
 class VIS_collection:
     """ A collection of several iterations. """
 
@@ -157,9 +157,10 @@ class VIS_collection:
                     current_pg_no += 1
 #                else:
                 current_pull_groups.append(self.pull_groups[atom])
-                    
+
             self.CVs["dihedrals"].append(Dihedral(current_pull_groups))
-            
+
+        curr_COM_group_no = 0
         for i,row in enumerate(COM_group_text.split("\n")[2:]):
             row = row.split("#")[0].strip()
             if len(row) == 0:
@@ -169,7 +170,8 @@ class VIS_collection:
             if group not in self.pull_groups:
                 self.pull_groups[group] = group
                 current_pg_no += 1
-            self.pull_groups[group].add_COM_group_number(i)
+            self.pull_groups[group].add_COM_group_number(curr_COM_group_no)
+            curr_COM_group_no += 1
         for p_group in self.pull_groups:
             for g_no in p_group.COM_group_numbers:
                 COM_group_no[g_no] = p_group
@@ -181,6 +183,14 @@ class VIS_collection:
             for g_no in row.split():
                 current_pull_groups.append(COM_group_no[int(g_no)])
             self.CVs["distances"].append(Distance(current_pull_groups))
+        log("Pull groups")
+        log("Dihedrals")
+        for CV in self.CVs["dihedrals"]:
+            log(str(CV.pull_groups))
+        log("Distances")
+        for CV in self.CVs["distances"]:
+            log(str(CV.pull_groups))
+
 
     def parse_parameters(self):
         if self.state > 0:
@@ -202,7 +212,7 @@ class VIS_collection:
                         P_FILE_DICT[attribute][1](attributes[attribute]))
             else:
                 raise NameError("Parameter "+ attribute + " not recognised")
-        
+
 
     def parse_visualisations(self, text):
         for row in text.split("\n"):
@@ -259,9 +269,9 @@ class VIS_collection:
                 self.startVIS.npt()
             self.state = 2
             save(self)
-            
-            
-    
+
+
+
     def run_method(self):
         try:
             log_t = open("log.txt").read()
@@ -326,7 +336,7 @@ class VIS_collection:
                                    self.strings,
                                    CV_index = (CV1index, CV2index),
                                    spdim = sp_dim(len(self.strings) // 5 + 1),
-                                   select = 1,
+                                   select = 3,
                                    savedir = "plots",
                                    CV_names = CV_names)
                 plot_iter_splines_2D(phie,
@@ -345,7 +355,7 @@ class VIS_collection:
                                      tuple([cv.get_name() for cv in self.CVs["dihedrals"]+self.CVs["distances"]]))
                 plot_sim_par_coords(frame, "plots")
 
-        
+
 
 
 
@@ -458,7 +468,7 @@ class VIS_string:
         plotwindow.plot(self.start_CVs[:, xdim],
                         self.start_CVs[:, ydim],
                         label = "start_CVs: " + label)
-        
+
     def prep_new_CVs(self, opposites, redo = False):
         if self.state == 2 or (redo and self.state > 2):
             print("Calculating CV values for new string")
@@ -478,6 +488,7 @@ class VIS_string:
             old_CVs = [self.start.get_CVs()]
             new_string = [VIS.VIS.fresh_copy(old_state) for old_state in self.start_string]
             nsteps = 1000
+            sim_time = 0.002 * nsteps
             for i,fresh_copy in enumerate(new_string):
                 parameters ={}
                 parameters["nsteps"] = "{:10}; {}".format(nsteps, str(nsteps * 0.002) +" ps")
@@ -488,7 +499,7 @@ class VIS_string:
                         delta = delta_angle(self.new_CVs[i+1,j], old[j])
                     else:
                         delta = self.new_CVs[i+1,j] - old[j]
-                    parameters["pull_coord" + str(j + 1) + "_rate"] = delta * 0.002 / nsteps
+                    parameters["pull_coord" + str(j + 1) + "_rate"] = delta / sim_time
                     parameters["pull_coord" + str(j + 1) + "_k"] = 2000
                 fresh_copy.steered(parameters)
             old_CVs.append(self.end.get_CVs())
@@ -588,4 +599,3 @@ if __name__ == "__main__":
     a.create_base_string()
     a.run_method()
     a.visualisations()
-    

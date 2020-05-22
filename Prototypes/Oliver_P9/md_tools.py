@@ -493,8 +493,8 @@ def plot_iterations_2D(phie,
     if ppf < 6:
         size = None
     else:
-        size = [ppf * 0.2 * 6.4, ppf * 0.2 * 4.8] 
-    plt.figure(figsiz = size)
+        size = [ppf * 0.4 * 6.4, ppf * 0.4 * 4.8]
+    plt.figure(figsize = size)
     plt.plot(phie,psie,"ro-", label = "Initial")
     plt.plot(init_x, init_y, "x")
     for i,string in enumerate(iterations[::select]):

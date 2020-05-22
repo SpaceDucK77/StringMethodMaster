@@ -5,3 +5,5 @@ Prototypes/**/mdrun_*
 .idea
 .idea/*
 .idea/vcs.xml
+Prototypes/**/plot*
+Prototypes/Test_*

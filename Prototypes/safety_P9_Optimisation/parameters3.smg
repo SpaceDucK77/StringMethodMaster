@@ -4,11 +4,11 @@ end_conf      = end.gro     # ending position configuration file name
 topology_file = topol.top   # topology fil name
 struct_index  = index.ndx   # index file for substructures of configuration
 solvated      = 0           # starting configuration file is 0 => not solvated, 1 => solvated
-solvate       = 0           # 1 => solvate unsolvated initial configuration, 0 => don't
-max_iter      = 30           # Maximum number of iterations for this run
+solvate       = 1           # 1 => solvate unsolvated initial configuration, 0 => don't
+max_iter      = 4           # Maximum number of iterations for this run
 max_conv      = 0           # Maximum value of convergence measurement allowed for early stopping.
                             # Not satisfactorily implemented
-beads         = 10          # Number of beads/VISs on string
+beads         = 20          # Number of beads/VISs on string
 
 --- CV declarations ---
 [ COM_groups ] # COM groups, one per row, numbered from 0. Format: 1 5 7 # A group of atoms 1 5 and 7.

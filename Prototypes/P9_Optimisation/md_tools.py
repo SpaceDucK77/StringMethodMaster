@@ -259,6 +259,7 @@ def get_angle(conf_file, index_file):
     err = angler.output.erroroutput.result()
     if err != "":
         print("get_angle:\n", err)
+        return []
     result = open("temp.xvg").read().split("\n")[-2]
     angles = result.split()[1:]
     #print(angles)
@@ -483,12 +484,18 @@ def plot_iterations_2D(phie,
                        savedir = None,
                        CV_names = ["phi", "psi"]):
     iters = len(iterations)
-    plt.figure()
-    plt.plot(phie,psie,"ro-", label = "Initial")
     #print(CV_index)
     #print("init_states: ", init_states)
     init_x = init_states[:, CV_index[0]]
     init_y = init_states[:, CV_index[1]]
+    subplots = spdim[0] * spdim[1]
+    ppf = iters // subplots # ppf: plots per figure
+    if ppf < 6:
+        size = None
+    else:
+        size = [ppf * 0.4 * 6.4, ppf * 0.4 * 4.8]
+    plt.figure(figsize = size)
+    plt.plot(phie,psie,"ro-", label = "Initial")
     plt.plot(init_x, init_y, "x")
     for i,string in enumerate(iterations[::select]):
         string.plot_CVs_2D(plt,
@@ -506,10 +513,8 @@ def plot_iterations_2D(phie,
         plt.close()
 
 
-    subplots = spdim[0] * spdim[1]
-    ppf = iters // subplots # ppf: plots per figure
 
-    plt.figure()
+    plt.figure(figsize = size)
     for i in range(subplots):
         plt.subplot(spdim[0], spdim[1], 1+i)
         plt.plot(phie,psie,"ro-", label = "Initial")

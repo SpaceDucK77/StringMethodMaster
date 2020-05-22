@@ -186,10 +186,11 @@ class VIS_collection:
         log("Pull groups")
         log("Dihedrals")
         for CV in self.CVs["dihedrals"]:
-            log(str(CV.pull_grups))
+            log(str(CV.pull_groups))
         log("Distances")
         for CV in self.CVs["distances"]:
             log(str(CV.pull_groups))
+
 
     def parse_parameters(self):
         if self.state > 0:
@@ -335,7 +336,7 @@ class VIS_collection:
                                    self.strings,
                                    CV_index = (CV1index, CV2index),
                                    spdim = sp_dim(len(self.strings) // 5 + 1),
-                                   select = 1,
+                                   select = 3,
                                    savedir = "plots",
                                    CV_names = CV_names)
                 plot_iter_splines_2D(phie,
@@ -487,6 +488,7 @@ class VIS_string:
             old_CVs = [self.start.get_CVs()]
             new_string = [VIS.VIS.fresh_copy(old_state) for old_state in self.start_string]
             nsteps = 1000
+            sim_time = 0.002 * nsteps
             for i,fresh_copy in enumerate(new_string):
                 parameters ={}
                 parameters["nsteps"] = "{:10}; {}".format(nsteps, str(nsteps * 0.002) +" ps")
@@ -497,7 +499,7 @@ class VIS_string:
                         delta = delta_angle(self.new_CVs[i+1,j], old[j])
                     else:
                         delta = self.new_CVs[i+1,j] - old[j]
-                    parameters["pull_coord" + str(j + 1) + "_rate"] = delta * 0.002 / nsteps
+                    parameters["pull_coord" + str(j + 1) + "_rate"] = delta / sim_time
                     parameters["pull_coord" + str(j + 1) + "_k"] = 2000
                 fresh_copy.steered(parameters)
             old_CVs.append(self.end.get_CVs())
