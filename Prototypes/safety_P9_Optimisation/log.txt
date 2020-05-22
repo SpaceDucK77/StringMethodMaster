@@ -1,12 +1,6 @@
 Pull groups
 Dihedrals
 Distances
-Pull groups
-Dihedrals
-Distances
-Pull groups
-Dihedrals
-Distances
 [Pull_group({863}), Pull_group({4334})]
 [Pull_group({3340}), Pull_group({1971})]
 [Pull_group({1971}), Pull_group({4334})]

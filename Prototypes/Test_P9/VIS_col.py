@@ -136,54 +136,9 @@ class VIS_collection:
             self.state = 3
             save(self)
 
-"""    def parse_CVs(self, text):
-        COM_group_no = {}
-        current_pg_no = 0
-        self.CVs={"dihedrals": [], "distances": []}
-        divide = text.split("[ dihedrals ]")
-        COM_group_text = divide[0]
-        dihedrals, distances = divide[1].split("[ distances ]")
-        for row in dihedrals.split("\n")[1:]:
-            row = row.split("#")[0].strip()
-            if len(row) == 0:
-                continue
-            current_pull_groups = []
-            for atom in row.split():
-                atom = frozenset([int(atom)])
-                if atom not in self.pull_groups:
-                    group = Pull_group(atom, current_pg_no)
-                    self.pull_groups[group] = group
-#                    current_pull_groups.append(group)
-                    current_pg_no += 1
-#                else:
-                current_pull_groups.append(self.pull_groups[atom])
-
-            self.CVs["dihedrals"].append(Dihedral(current_pull_groups))
-
-        for i,row in enumerate(COM_group_text.split("\n")[2:]):
-            row = row.split("#")[0].strip()
-            if len(row) == 0:
-                continue
-            row = [int(part.strip()) for part in row.split()]
-            group = Pull_group(row, current_pg_no)
-            if group not in self.pull_groups:
-                self.pull_groups[group] = group
-                current_pg_no += 1
-            self.pull_groups[group].add_COM_group_number(i)
-        for p_group in self.pull_groups:
-            for g_no in p_group.COM_group_numbers:
-                COM_group_no[g_no] = p_group
-        for row in distances.split("\n")[1:]:
-            row = row.split("#")[0].strip()
-            if len(row) == 0:
-                continue
-            current_pull_groups = []
-            for g_no in row.split():
-                current_pull_groups.append(COM_group_no[int(g_no)])
-            self.CVs["distances"].append(Distance(current_pull_groups))"""
     def parse_CVs(self, text):
         COM_group_no = {}
-        current_pg_no = 0
+        current_pg_no = 1
         self.CVs={"dihedrals": [], "distances": []}
         divide = text.split("[ dihedrals ]")
         COM_group_text = divide[0]
@@ -231,7 +186,7 @@ class VIS_collection:
         log("Pull groups")
         log("Dihedrals")
         for CV in self.CVs["dihedrals"]:
-            log(str(CV.pull_grups))
+            log(str(CV.pull_groups))
         log("Distances")
         for CV in self.CVs["distances"]:
             log(str(CV.pull_groups))
@@ -381,7 +336,7 @@ class VIS_collection:
                                    self.strings,
                                    CV_index = (CV1index, CV2index),
                                    spdim = sp_dim(len(self.strings) // 5 + 1),
-                                   select = 1,
+                                   select = 3,
                                    savedir = "plots",
                                    CV_names = CV_names)
                 plot_iter_splines_2D(phie,
@@ -533,6 +488,7 @@ class VIS_string:
             old_CVs = [self.start.get_CVs()]
             new_string = [VIS.VIS.fresh_copy(old_state) for old_state in self.start_string]
             nsteps = 1000
+            sim_time = 0.002 * nsteps
             for i,fresh_copy in enumerate(new_string):
                 parameters ={}
                 parameters["nsteps"] = "{:10}; {}".format(nsteps, str(nsteps * 0.002) +" ps")
@@ -543,7 +499,7 @@ class VIS_string:
                         delta = delta_angle(self.new_CVs[i+1,j], old[j])
                     else:
                         delta = self.new_CVs[i+1,j] - old[j]
-                    parameters["pull_coord" + str(j + 1) + "_rate"] = delta * 0.002 / nsteps
+                    parameters["pull_coord" + str(j + 1) + "_rate"] = delta / sim_time
                     parameters["pull_coord" + str(j + 1) + "_k"] = 2000
                 fresh_copy.steered(parameters)
             old_CVs.append(self.end.get_CVs())
