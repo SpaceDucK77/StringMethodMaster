@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.interpolate as interp
 import scipy.integrate as integr
-#import plotly.express as px
+import plotly.express as px
 import VIS
 import os
 import pickle
@@ -482,7 +482,8 @@ def plot_iterations_2D(phie,
                        spdim = (2, 3),
                        select = 1,
                        savedir = None,
-                       CV_names = ["phi", "psi"]):
+                       CV_names = ["phi", "psi"],
+                       lw = 1):
     iters = len(iterations)
     #print(CV_index)
     #print("init_states: ", init_states)
@@ -495,12 +496,13 @@ def plot_iterations_2D(phie,
     else:
         size = [ppf * 0.4 * 6.4, ppf * 0.4 * 4.8]
     plt.figure(figsize = size)
-    plt.plot(phie,psie,"ro-", label = "Initial")
-    plt.plot(init_x, init_y, "x")
+    plt.plot(phie,psie,"ro-", label = "Initial", linewidth = lw)
+    plt.plot(init_x, init_y, "x", linewidth = lw)
     for i,string in enumerate(iterations[::select]):
         string.plot_CVs_2D(plt,
                            CV_index = CV_index,
-                           label = str(i*select+1))
+                           label = str(i*select+1),
+                           lw = lw)
     plt.xlabel(CV_names[0])
     plt.ylabel(CV_names[1])
     plt.title("Every " + str(select) + "th iteration, linear interpolation")
@@ -508,7 +510,8 @@ def plot_iterations_2D(phie,
     if savedir != None:
         plt.savefig(savedir+"/" + \
                     "".join([name.capitalize() for name in CV_names])\
-                    + "every" + str(select) + "iterations.png",
+                    + "every" + str(select) + "iterations_w" + str(lw) + \
+                    ".png",
                     dpi = 300)
         plt.close()
 
@@ -517,13 +520,14 @@ def plot_iterations_2D(phie,
     plt.figure(figsize = size)
     for i in range(subplots):
         plt.subplot(spdim[0], spdim[1], 1+i)
-        plt.plot(phie,psie,"ro-", label = "Initial")
-        plt.plot(init_x, init_y, "x")
+        plt.plot(phie,psie,"ro-", label = "Initial", linewidth = lw)
+        plt.plot(init_x, init_y, "x", linewidth = lw)
         for j in range(ppf*i,ppf*(i+1)):
             string = iterations[j]
             string.plot_CVs_2D(plt,
                                CV_index = CV_index,
-                               label = str(j+1))
+                               label = str(j+1),
+                               lw = lw)
         plt.title("Iterations " + str(ppf * i + 1) + " to " + str(ppf * (i + 1)))
         plt.xlabel(CV_names[0])
         plt.ylabel(CV_names[1])
@@ -532,7 +536,7 @@ def plot_iterations_2D(phie,
         plt.savefig(savedir+"/" + \
                     "".join([name.capitalize() for name in CV_names])\
                     + "iterations" + str(1) + "To" + str(subplots * ppf) +\
-                    ".png",
+                    "_w" + str(lw) +".png",
                     dpi = 300)
         plt.close()
     if savedir == None:
@@ -546,19 +550,21 @@ def plot_iter_splines_2D(phie,
                          select = 0,
                          ppf = 1,
                          savedir = None,
-                         CV_names = ["phi", "psi"]):
+                         CV_names = ["phi", "psi"],
+                         lw = 1):
     iters = len(iterations)
     if select is 0:
         select = range(iters)
     for i in select:
         if i % ppf == 0:
             plt.figure()
-            plt.plot(phie,psie,"ro-", label = "Initial", color = 'k')
-            plt.plot(init_states[:, CV_index[0]], init_states[:, CV_index[1]], "x")
+            plt.plot(phie,psie,"ro-", label = "Initial", color = 'k', linewidth = lw)
+            plt.plot(init_states[:, CV_index[0]], init_states[:, CV_index[1]], "x", linewidth = lw)
         string = iterations[i]
         string.plot_spline_curve(plt,
                                  CV_index = CV_index,
-                                 label = str(i+1))
+                                 label = str(i+1),
+                                 lw = lw)
         if (i - 1) % ppf == 0:
             plt.xlabel(CV_names[0])
             plt.ylabel(CV_names[0])
@@ -569,14 +575,13 @@ def plot_iter_splines_2D(phie,
                 plt.savefig(savedir+"/" + \
                             "".join([name.capitalize() for name in CV_names])\
                             + "Spline2DIter" + str(i) + "To" + \
-                            str(i + ppf - 1) + ".png",
+                            str(i + ppf - 1) + "_w" + str(lw) + ".png",
                             dpi = 300)
                 plt.close()
     if savedir == None:
         plt.show()
 
 def plot_sim_par_coords(panda_frame, savedir = None):
-    import plotly.express as px
     fig = px.parallel_coordinates(panda_frame, color = "VISno")
     # fig = px.parallel_coordinates
     if savedir == None:
@@ -682,4 +687,3 @@ ITP_HEADERS["dihedral"] = "; ai   aj   ak   al  type  phi  dphi  kfac"
 ITP_HEADERS["distance"] = "; ai   aj   type   index   type'      low     up1     up2     fac"
 if __name__ == "__main__":
     mdp_create("simple.mdp")
-

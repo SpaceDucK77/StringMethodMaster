@@ -17,3 +17,51 @@ pbc                       = xyz       ; Periodic Boundary Conditions in all 3 di
 
 ;Custom_parameters
 
+
+; Pull code
+pull                      = yes
+pull_ncoords              = 5
+pull_ngroups              = 8
+pull_group1_name          = grp_a1
+pull_group2_name          = grp_a2
+pull_group3_name          = grp_a3
+pull_group4_name          = grp_a4
+pull_group5_name          = grp_a5
+pull_group6_name          = grp_a6
+pull_group7_name          = grp_a7
+pull_group8_name          = grp_a8
+pull_coord1_type          = umbrella
+pull_coord1_geometry      = distance
+pull_coord1_dim           = Y Y Y
+pull_coord1_groups        = 1 2
+pull_coord1_start         = yes
+pull_coord1_rate          = 0
+pull_coord1_k             = 1000
+pull_coord2_type          = umbrella
+pull_coord2_geometry      = distance
+pull_coord2_dim           = Y Y Y
+pull_coord2_groups        = 3 4
+pull_coord2_start         = yes
+pull_coord2_rate          = 0
+pull_coord2_k             = 1000
+pull_coord3_type          = umbrella
+pull_coord3_geometry      = distance
+pull_coord3_dim           = Y Y Y
+pull_coord3_groups        = 2 4
+pull_coord3_start         = yes
+pull_coord3_rate          = 0
+pull_coord3_k             = 1000
+pull_coord4_type          = umbrella
+pull_coord4_geometry      = distance
+pull_coord4_dim           = Y Y Y
+pull_coord4_groups        = 5 6
+pull_coord4_start         = yes
+pull_coord4_rate          = 0
+pull_coord4_k             = 1000
+pull_coord5_type          = umbrella
+pull_coord5_geometry      = distance
+pull_coord5_dim           = Y Y Y
+pull_coord5_groups        = 7 8
+pull_coord5_start         = yes
+pull_coord5_rate          = 0
+pull_coord5_k             = 1000

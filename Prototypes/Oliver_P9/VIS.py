@@ -169,22 +169,21 @@ class VIS:
         pc = "pull_coord"
         keys = ["_type", "_geometry", "_dim",
                 "_groups", "_start", "_rate", "_k"]
-        st_dict = {"_type": "umbrella",
-                   "_geometry": None,
-                   "_dim": "Y Y Y",
-                   "_groups": None,
-                   "_start": "yes",
-                   "_rate": "0",
-                   "_k": "1000"}
         for cv_type in self.CV_def:
             for cv in self.CV_def[cv_type]:
+                st_dict = {"_type": "umbrella",
+                           "_geometry": None,
+                           "_dim": "Y Y Y",
+                           "_groups": None,
+                           "_start": "yes",
+                           "_rate": "0",
+                           "_k": "1000"}.copy()
                 i += 1
                 st_dict["_geometry"] = cv.geometry()
                 st_dict["_groups"] = cv.mdp_groups()
                 for stat in keys:
                     slist.append(pc + str(i) + stat)
                     sdict[pc + str(i) + stat] = st_dict[stat]
-                    
 
     def get_CV_coll(self, index_file = "index.ndx"):
         cv_coll = {}

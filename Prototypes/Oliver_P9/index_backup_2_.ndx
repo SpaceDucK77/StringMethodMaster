@@ -19619,26 +19619,26 @@
 
 [ dihedrals ]
 
-[ grp_a1 ]
+[ grp_a0 ]
 863
 
-[ grp_a2 ]
+[ grp_a1 ]
 4334
 
-[ grp_a3 ]
+[ grp_a2 ]
 3340
 
-[ grp_a4 ]
+[ grp_a3 ]
 1971
 
-[ grp_a5 ]
+[ grp_a4 ]
 1462
 
-[ grp_a6 ]
+[ grp_a5 ]
 3459
 
-[ grp_a7 ]
+[ grp_a6 ]
 3203
 
-[ grp_a8 ]
+[ grp_a7 ]
 3318
