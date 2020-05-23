@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.interpolate as interp
 import scipy.integrate as integr
-import plotly.express as px
+#import plotly.express as px
 import VIS
 import os
 import pickle

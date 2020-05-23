@@ -10,7 +10,7 @@
 #SBATCH --ntasks-per-node=32
 
 # length in hours
-#SBATCH -t 00:29:59
+#SBATCH -t 00:59:59
 
 # Receive e-mails when your job starts and ends
 #SBATCH --mail-user=oliver.fleetwood@scilifelab.se --mail-type=FAIL
@@ -44,5 +44,6 @@ cmd="conda activate /cfs/klemming/nobackup/o/oliverfl/py37"
 echo $cmd
 $cmd
 cmd="srun -n 1 python VIS_col.py"
+#cmd="python VIS_col.py"
 echo $cmd
 $cmd

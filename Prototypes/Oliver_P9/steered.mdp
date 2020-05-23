@@ -1,0 +1,123 @@
+; title       = Umbrella pulling simulation
+;define      = -DMY_POSRES
+; Run parameters
+integrator                = md
+dt                        = 0.002
+
+;***
+tinit                     = 0
+
+nsteps                    = 250000    ; 500 ps
+
+;***
+nstcomm                   = 10 ;COM motion removal???
+
+; Output parameters ***
+nstxout                   = 5000      ; every 10 ps Number of STeps between writing coordinates
+nstvout                   = 5000      ; Number of STeps between writing velocities
+nstfout                   = 500       ; Number of STeps between writing forces
+nstxtcout                 = 500       ; every 1 ps ** not in documentation
+nstenergy                 = 500       ; Number of STeps between writing energies
+
+; Bond parameters
+constraint_algorithm      = lincs
+constraints               = all-bonds
+continuation              = yes       ; continuing from NPT
+; Single-range cutoff scheme
+cutoff-scheme             = Verlet
+
+;***
+nstlist                   = 20    ; Number of STeps between updating neighbour list
+;ns_type         = grid  ; Not in documentation
+rlist                     = 1.4   ; Cut off distance for short range neighbour list
+
+rcoulomb                  = 1.4;** Distance for coulmb cut off
+rvdw                      = 1.4;** Distance for the LJ or Buckingham cut-off
+
+; PME electrostatics parameters
+coulombtype               = PME
+;***
+fourierspacing            = 0.12
+fourier_nx                = 0
+fourier_ny                = 0
+fourier_nz                = 0
+pme_order                 = 4
+ewald_rtol                = 1e-5
+optimize_fft              = yes  ; Not in documentation
+; Seem to be default values
+
+; Berendsen temperature coupling is on in two groups
+Tcoupl                    = Nose-Hoover ;** Also gives tau-t different meaning
+tc_grps                   = Protein   ;Non-Protein
+tau_t                     = 1.0       ;1.0**
+ref_t                     = 310       ;310**
+; Pressure coupling is no longer on
+; Pcoupl          = Parrinello-Rahman
+
+;***
+; pcoupltype      = isotropic  ; Pressure coupling isotropy
+
+; tau_p           = 1.0;**
+; compressibility = 4.5e-5
+; ref_p           = 1.0
+
+;***
+refcoord_scaling          = com
+; Generate velocities is off
+gen_vel                   = no
+; Periodic boundary conditions are on in all directions
+pbc                       = xyz
+; Long-range dispersion correction
+DispCorr                  = EnerPres
+
+
+;Custom_parameters
+
+pull_coord1_rate          = 0.000798
+pull_coord2_rate          = -0.0026839999999999998
+pull_coord3_rate          = 0.0009159999999999999
+pull_coord4_rate          = -0.0008119999999999994
+pull_coord5_rate          = 0.00033000000000000005
+
+; Pull code
+pull                      = yes
+pull_ncoords              = 5
+pull_ngroups              = 8
+pull_group1_name          = grp_a1
+pull_group2_name          = grp_a2
+pull_group3_name          = grp_a3
+pull_group4_name          = grp_a4
+pull_group5_name          = grp_a5
+pull_group6_name          = grp_a6
+pull_group7_name          = grp_a7
+pull_group8_name          = grp_a8
+pull_coord1_type          = umbrella
+pull_coord1_geometry      = distance
+pull_coord1_dim           = Y Y Y
+pull_coord1_groups        = 1 2
+pull_coord1_start         = yes
+pull_coord1_k             = 1000
+pull_coord2_type          = umbrella
+pull_coord2_geometry      = distance
+pull_coord2_dim           = Y Y Y
+pull_coord2_groups        = 3 4
+pull_coord2_start         = yes
+pull_coord2_k             = 1000
+pull_coord3_type          = umbrella
+pull_coord3_geometry      = distance
+pull_coord3_dim           = Y Y Y
+pull_coord3_groups        = 2 4
+pull_coord3_start         = yes
+pull_coord3_k             = 1000
+pull_coord4_type          = umbrella
+pull_coord4_geometry      = distance
+pull_coord4_dim           = Y Y Y
+pull_coord4_groups        = 5 6
+pull_coord4_start         = yes
+pull_coord4_k             = 1000
+pull_coord5_type          = umbrella
+pull_coord5_geometry      = distance
+pull_coord5_dim           = Y Y Y
+pull_coord5_groups        = 7 8
+pull_coord5_start         = yes
+pull_coord5_k             = 1000
