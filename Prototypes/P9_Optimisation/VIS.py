@@ -13,6 +13,9 @@ from md_tools import *
 class DeprecatedError(Exception):
     pass
 
+class ExceptionDebugger(Exception):
+    pass
+
 class VIS:
     # Virtual Initial State for Gromacs MD
 
@@ -46,7 +49,7 @@ class VIS:
         self.index_file = index_file
         self.topology_file = topology_file
         self.latest_path = "" # Directory path of the latest run.
-        
+
         self.CV_mdp_list = None
         self.CV_mdp_dict = None
         if generate_CV_mdp_dict == True:
@@ -95,14 +98,13 @@ class VIS:
 
     def delete_runs(self):
         for path in self.history:
-            log("clearing: " + path)
             for file_name in os.listdir(path):
                 if ".xtc" in file_name or ".gro" in file_name:
                     continue
                 file_name = path + file_name
                 if os.path.isfile(file_name):
                     os.remove(file_name)
-            
+
 
     def EM(self, new_parameters = None, new_keys = None, restrain_cv = False):
         # Sets up for an EM MD run preparation
@@ -121,9 +123,10 @@ class VIS:
             new_parameters = newer_p
             extra_in = {"-r": self.configuration_file, "-n": "index.ndx"}
             additions = {"in": extra_in}
- 
+
         self.mdp_settings[sim_name] = new_parameters
         self.mdp_settings[sim_name + "_keys"] = new_keys
+        log("---- EM ----")
         prep = self.single_prep(name = sim_name,
                                 template = "mdp_templates/minim.mdp.templ",
                                 restrained = restrain_cv,
@@ -169,6 +172,7 @@ class VIS:
         pc = "pull_coord"
         keys = ["_type", "_geometry", "_dim",
                 "_groups", "_start", "_rate", "_k"]
+<<<<<<< Updated upstream
         st_dict = {"_type": "umbrella",
                    "_geometry": None,
                    "_dim": "Y Y Y",
@@ -178,13 +182,28 @@ class VIS:
                    "_k": "1000"}
         for cv_type in self.CV_def:
             for cv in self.CV_def[cv_type]:
+=======
+        for cv_type in self.CV_def:
+            for cv in self.CV_def[cv_type]:
+                st_dict = {"_type": "umbrella",
+                           "_geometry": None,
+                           "_dim": "Y Y Y",
+                           "_groups": None,
+                           "_start": "yes",
+                           "_rate": "0",
+                           "_k": "1000"}.copy()
+>>>>>>> Stashed changes
                 i += 1
                 st_dict["_geometry"] = cv.geometry()
                 st_dict["_groups"] = cv.mdp_groups()
                 for stat in keys:
                     slist.append(pc + str(i) + stat)
                     sdict[pc + str(i) + stat] = st_dict[stat]
+<<<<<<< Updated upstream
                     
+=======
+
+>>>>>>> Stashed changes
 
     def get_CV_coll(self, index_file = "index.ndx"):
         cv_coll = {}
@@ -195,7 +214,6 @@ class VIS:
                                                     index_file, cv))
         return cv_coll
 
-    # Replace with get_CV_coll later
     def get_CVs(self, index_file = "index.ndx"):
         # Extracts CVs as a list
         cv_coll = self.get_CV_coll()
@@ -220,8 +238,10 @@ class VIS:
         sim_name = "ions"
         self.mdp_settings[sim_name] = new_parameters
         self.mdp_settings[sim_name + "_keys"] = new_keys
+        log("------ Genion -----\n")
         prep = self.single_prep(name = sim_name,
                                 template = "mdp_templates/ions.mdp.templ")
+        self.single_run(prep, sim_name)
         genion = gmx.commandline_operation(executable = "gmx",
                                            arguments =  ["genion",
                                                          "-pname", pname,
@@ -234,13 +254,13 @@ class VIS:
         genion.run()
         self.configuration_file = "ion_"+self.configuration_file
         self.make_index()
-        print("ionate:\n", genion.output.erroroutput.result())
+        log("ionate:\n" + str( genion.output.erroroutput.result()) + "\n")
 
     def make_index(self):
         make_index(self.configuration_file, self.index_file)
         update_index_file(self.index_file, self.CV_def, self. pull_groups)
-                                                        
-        
+
+
     def npt(self, new_parameters = None, new_keys = None):
         # Sets up for a constant preassure equilibration run preparation
         if self.is_solvated == 0:
@@ -258,6 +278,7 @@ class VIS:
         new_parameters = newer_p
         self.mdp_settings[sim_name] = new_parameters
         self.mdp_settings[sim_name + "_keys"] = new_keys
+        log("----- Npt -----\n")
         additions["in"] = {"-t": self.latest_path + "state.cpt",
                            "-r": self.configuration_file,
                            "-n": self.index_file}
@@ -269,7 +290,7 @@ class VIS:
     def nvt(self, new_parameters = None, new_keys = None):
         # Sets up for a constant volume equilibration run preparation
         if self.is_solvated == 0:
-            return        
+            return
         if new_parameters == None:
             new_parameters = {}
             new_keys = []
@@ -281,16 +302,17 @@ class VIS:
         append_dict(newer_p, new_parameters,
                     new_keys, self.CV_mdp_list)
         new_parameters = newer_p
-        
+
         self.mdp_settings[sim_name] = new_parameters
         self.mdp_settings[sim_name + "_keys"] = new_keys
+        log("----- Nvt -----\n")
         additions["in"] = {"-r": self.configuration_file,
                            "-n": self.index_file}
         prep = self.single_prep(name = sim_name,
                                 template = "mdp_templates/nvt.mdp.templ",
                                 additions = additions)
         self.single_run(prep, sim_name)
-        
+
     def run(self):
         # Sets up for a standard MD run preparation
         pass
@@ -312,29 +334,34 @@ class VIS:
                        "-c": self.configuration_file,
                        "-p": "topol.top"}
         output_files = {"-o" : name + ".tpr"}
-        print("input_files:\n", input_files, "\noutput_files:\n", output_files)
+        log("input_files:\n" + str(input_files) + "\noutput_files:\n" + str(output_files) + "\n")
         if additions:
             if "in" in additions:
                 append_dict(input_files, additions["in"])
             if "out" in additions:
                 append_dict(output_files, additions["out"])
 
+        try:
+            raise ExceptionDebugger()
+        except ExceptionDebugger as deb:
+            log(str(deb) + "\n")
+
         prep =  gmx.commandline_operation(executable = executable,
                                           arguments = arguments,
                                           input_files = input_files,
                                           output_files = output_files)
         prep.run()
-        print("prep "+ name + ":\n", prep.output.erroroutput.result())
+        log("prep "+ name + ":\n" + str(prep.output.erroroutput.result()) + "\n")
         return prep
 
-    def single_run(self, prep, name, log = True):
+    def single_run(self, prep, name, log_active = True):
         mdrun = gmx.read_tpr(prep.output.file["-o"])
         md = gmx.mdrun(mdrun)
         md.run()
         path = md.output.trajectory.result()
         path = path[:path.rfind("/") + 1]
         self.configuration_file = path + "confout.gro"
-        if log:
+        if log_active:
             self.history.append(path)
         self.latest_path = path
         shutil.move(name + ".mdp", path + name + ".mdp")
@@ -353,7 +380,7 @@ class VIS:
                                                 output_files = {"-o": "solv_"+file_name})
 
             solvate.run()
-            print("solvate:\n", solvate.output.erroroutput.result())
+            log("solvate:\n" + str( solvate.output.erroroutput.result()) + "\n")
             self.configuration_file = "solv_"+file_name
             self.is_solvated = 1
 
@@ -365,7 +392,7 @@ class VIS:
                                   output_files = {"-o": self.latest_path + "conf.gro"},
                                   stdin = "0")
         traj.run()
-        print("split_traj:\n", traj.output.erroroutput.result())
+        log("split_traj:\n" +  str(traj.output.erroroutput.result()) + "\n")
         return self.latest_path
 
         # gmx trjconv -s pull.tpr -f pull.xtc -o conf.gro -sep

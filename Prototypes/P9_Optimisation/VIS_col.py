@@ -317,7 +317,11 @@ class VIS_collection:
         sCV = self.startVIS.get_CVs()
         eCV = self.endVIS.get_CVs()
         CV_2D = list(self.CV_2D)
+<<<<<<< Updated upstream
         print(type(self.CV_2D))
+=======
+        CV_2D.sort(key = lambda x : self.CV_vis[x])
+>>>>>>> Stashed changes
         for i,CV1 in enumerate(CV_2D):
             CV1index = self.CV_vis[CV1]
             for CV2 in CV_2D[i+1:]:

@@ -13,6 +13,9 @@ from md_tools import *
 class DeprecatedError(Exception):
     pass
 
+class ExceptionDebugger(Exception):
+    pass
+
 class VIS:
     # Virtual Initial State for Gromacs MD
 
@@ -24,7 +27,8 @@ class VIS:
                  index_file = "index.ndx",
                  pull_groups = None,
                  solvated = 0,
-                 restrain_file = "cv_restraints.itp"):
+                 restrain_file = "cv_restraints.itp",
+                 generate_CV_mdp_dict = True):
         self.mdp_settings = {} # Specific .mdp settings for this system.
         self.configuration_file = conf # .gro file_name with configuration
         # self.start_conf = conf # for reference
@@ -45,10 +49,11 @@ class VIS:
         self.index_file = index_file
         self.topology_file = topology_file
         self.latest_path = "" # Directory path of the latest run.
-        
+
         self.CV_mdp_list = None
         self.CV_mdp_dict = None
-        self.generate_CV_mdp_dict()
+        if generate_CV_mdp_dict == True:
+            self.generate_CV_mdp_dict()
 
     def box(self):
         # Creates MD-simulation box
@@ -93,13 +98,13 @@ class VIS:
 
     def delete_runs(self):
         for path in self.history:
-            for file_name in os.dir(path):
+            for file_name in os.listdir(path):
                 if ".xtc" in file_name or ".gro" in file_name:
                     continue
                 file_name = path + file_name
-                if os.path.isfile(fil_name):
+                if os.path.isfile(file_name):
                     os.remove(file_name)
-            
+
 
     def EM(self, new_parameters = None, new_keys = None, restrain_cv = False):
         # Sets up for an EM MD run preparation
@@ -107,7 +112,7 @@ class VIS:
             new_parameters = {}
             new_keys = []
         if new_keys == None:
-            new_keys = new_parameters.keys()
+            new_keys = list(new_parameters.keys())
         sim_name = "em"
         additions = {}
         if restrain_cv:
@@ -118,9 +123,10 @@ class VIS:
             new_parameters = newer_p
             extra_in = {"-r": self.configuration_file, "-n": "index.ndx"}
             additions = {"in": extra_in}
- 
+
         self.mdp_settings[sim_name] = new_parameters
         self.mdp_settings[sim_name + "_keys"] = new_keys
+        log("---- EM ----")
         prep = self.single_prep(name = sim_name,
                                 template = "mdp_templates/minim.mdp.templ",
                                 restrained = restrain_cv,
@@ -128,15 +134,21 @@ class VIS:
         self.single_run(prep, sim_name)
 
     def fresh_copy(original, collection = None):
-        # NEEDS UPDATE
-        copy = VIS(original.configuration_file, collection)
+        copy = VIS(conf = original.configuration_file,
+                   collection =  original.collection,
+                   CV_definitions = original.CV_def,
+                   topology_file = original.topology_file,
+                   index_file = original.index_file,
+                   pull_groups = original.pull_groups,
+                   solvated =  original.is_solvated,
+                   generate_CV_mdp_dict = False)
         #copy.mdp_settings = original.mdp_settings
         copy.CV_keys = original.CV_keys
         copy.CV_info = original.CV_info
         copy.is_ready = original.is_ready
-        copy.is_solvated = original.is_solvated
-        copy.cv_index_file = original.cv_index_file
-        #copy.latest_path = original.latest_path
+        copy.latest_path = original.latest_path
+        copy.CV_mdp_list = original.CV_mdp_list
+        copy.CV_mdp_dict = original.CV_mdp_dict
         return copy
 
     def generate_CV_mdp_dict(self):
@@ -160,36 +172,36 @@ class VIS:
         pc = "pull_coord"
         keys = ["_type", "_geometry", "_dim",
                 "_groups", "_start", "_rate", "_k"]
-        st_dict = {"_type": "umbrella",
-                   "_geometry": None,
-                   "_dim": "Y Y Y",
-                   "_groups": None,
-                   "_start": "yes",
-                   "_rate": "0",
-                   "_k": "1000"}
         for cv_type in self.CV_def:
             for cv in self.CV_def[cv_type]:
+                st_dict = {"_type": "umbrella",
+                           "_geometry": None,
+                           "_dim": "Y Y Y",
+                           "_groups": None,
+                           "_start": "yes",
+                           "_rate": "0",
+                           "_k": "1000"}.copy()
                 i += 1
                 st_dict["_geometry"] = cv.geometry()
                 st_dict["_groups"] = cv.mdp_groups()
                 for stat in keys:
                     slist.append(pc + str(i) + stat)
                     sdict[pc + str(i) + stat] = st_dict[stat]
-                    
+
 
     def get_CV_coll(self, index_file = "index.ndx"):
         cv_coll = {}
         cv_coll["dihedral"] = get_angle(self.configuration_file, index_file)
         cv_coll["distance"] = []
         for cv in self.CV_def["distances"]:
-            cv_coll["distances"].append(get_distance(self.configuration_file,
-                                                     index_file, cv))
+            cv_coll["distance"].append(get_distance(self.configuration_file,
+                                                    index_file, cv))
         return cv_coll
 
-    # Replace with get_CV_coll later
     def get_CVs(self, index_file = "index.ndx"):
-        # Extracts Alanine dipeptide phi and chi angles
-        return get_angle(self.configuration_file, index_file)
+        # Extracts CVs as a list
+        cv_coll = self.get_CV_coll()
+        return cv_coll["dihedral"] + cv_coll["distance"]
 
     def ions(self, new_parameters = None, new_keys = None, ions = None):
         # Adding ions to box
@@ -197,7 +209,7 @@ class VIS:
             new_parameters = {}
             new_keys = []
         if new_keys == None:
-            new_keys = new_parameters.keys()
+            new_keys = list(new_parameters.keys())
         #ion_top =  ".".join(self.configuration_file.split(".")[:-1]) + ".tpr"
         if ions is None or "pname" not in ions:
             pname = "NA" #get_pname()
@@ -210,8 +222,10 @@ class VIS:
         sim_name = "ions"
         self.mdp_settings[sim_name] = new_parameters
         self.mdp_settings[sim_name + "_keys"] = new_keys
+        log("------ Genion -----\n")
         prep = self.single_prep(name = sim_name,
                                 template = "mdp_templates/ions.mdp.templ")
+        self.single_run(prep, sim_name)
         genion = gmx.commandline_operation(executable = "gmx",
                                            arguments =  ["genion",
                                                          "-pname", pname,
@@ -224,24 +238,31 @@ class VIS:
         genion.run()
         self.configuration_file = "ion_"+self.configuration_file
         self.make_index()
-        print("ionate:\n", genion.output.erroroutput.result())
+        log("ionate:\n" + str( genion.output.erroroutput.result()) + "\n")
 
     def make_index(self):
         make_index(self.configuration_file, self.index_file)
         update_index_file(self.index_file, self.CV_def, self. pull_groups)
-                                                        
-        
+
+
     def npt(self, new_parameters = None, new_keys = None):
         # Sets up for a constant preassure equilibration run preparation
+        if self.is_solvated == 0:
+            return
         if new_parameters == None:
             new_parameters = {}
             new_keys = []
         if new_keys == None:
-            new_keys = new_parameters.keys()
+            new_keys = list(new_parameters.keys())
         sim_name = "npt"
         additions = {}
+        newer_p = self.CV_mdp_dict.copy()
+        append_dict(newer_p, new_parameters,
+                    new_keys, self.CV_mdp_list)
+        new_parameters = newer_p
         self.mdp_settings[sim_name] = new_parameters
         self.mdp_settings[sim_name + "_keys"] = new_keys
+        log("----- Npt -----\n")
         additions["in"] = {"-t": self.latest_path + "state.cpt",
                            "-r": self.configuration_file,
                            "-n": self.index_file}
@@ -252,27 +273,30 @@ class VIS:
 
     def nvt(self, new_parameters = None, new_keys = None):
         # Sets up for a constant volume equilibration run preparation
+        if self.is_solvated == 0:
+            return
         if new_parameters == None:
             new_parameters = {}
             new_keys = []
         if new_keys == None:
-            new_keys = new_parameters.keys()
+            new_keys = list(new_parameters.keys())
         sim_name = "nvt"
         additions = {}
         newer_p = self.CV_mdp_dict.copy()
         append_dict(newer_p, new_parameters,
                     new_keys, self.CV_mdp_list)
         new_parameters = newer_p
-        
+
         self.mdp_settings[sim_name] = new_parameters
         self.mdp_settings[sim_name + "_keys"] = new_keys
+        log("----- Nvt -----\n")
         additions["in"] = {"-r": self.configuration_file,
                            "-n": self.index_file}
         prep = self.single_prep(name = sim_name,
                                 template = "mdp_templates/nvt.mdp.templ",
                                 additions = additions)
         self.single_run(prep, sim_name)
-        
+
     def run(self):
         # Sets up for a standard MD run preparation
         pass
@@ -294,29 +318,34 @@ class VIS:
                        "-c": self.configuration_file,
                        "-p": "topol.top"}
         output_files = {"-o" : name + ".tpr"}
-        print("input_files:\n", input_files, "\noutput_files:\n", output_files)
+        log("input_files:\n" + str(input_files) + "\noutput_files:\n" + str(output_files) + "\n")
         if additions:
             if "in" in additions:
                 append_dict(input_files, additions["in"])
             if "out" in additions:
                 append_dict(output_files, additions["out"])
 
+        try:
+            raise ExceptionDebugger()
+        except ExceptionDebugger as deb:
+            log(str(deb) + "\n")
+
         prep =  gmx.commandline_operation(executable = executable,
                                           arguments = arguments,
                                           input_files = input_files,
                                           output_files = output_files)
         prep.run()
-        print("prep "+ name + ":\n", prep.output.erroroutput.result())
+        log("prep "+ name + ":\n" + str(prep.output.erroroutput.result()) + "\n")
         return prep
 
-    def single_run(self, prep, name, log = False):
+    def single_run(self, prep, name, log_active = True):
         mdrun = gmx.read_tpr(prep.output.file["-o"])
         md = gmx.mdrun(mdrun)
         md.run()
         path = md.output.trajectory.result()
         path = path[:path.rfind("/") + 1]
         self.configuration_file = path + "confout.gro"
-        if log:
+        if log_active:
             self.history.append(path)
         self.latest_path = path
         shutil.move(name + ".mdp", path + name + ".mdp")
@@ -335,7 +364,7 @@ class VIS:
                                                 output_files = {"-o": "solv_"+file_name})
 
             solvate.run()
-            print("solvate:\n", solvate.output.erroroutput.result())
+            log("solvate:\n" + str( solvate.output.erroroutput.result()) + "\n")
             self.configuration_file = "solv_"+file_name
             self.is_solvated = 1
 
@@ -347,29 +376,54 @@ class VIS:
                                   output_files = {"-o": self.latest_path + "conf.gro"},
                                   stdin = "0")
         traj.run()
-        print("split_traj:\n", traj.output.erroroutput.result())
+        log("split_traj:\n" +  str(traj.output.erroroutput.result()) + "\n")
         return self.latest_path
 
         # gmx trjconv -s pull.tpr -f pull.xtc -o conf.gro -sep
 
-    def steered(self, new_parameters = None):
+    def steered(self, new_parameters = None, new_keys = None):
         # Sets up for a steered run preparation
         # Command line: gmx grompp -f md_pull_test.mdp -c confout.gro -p topol.top -r confout.gro -n index.ndx -o pull.tpr -maxwarn 1
         if new_parameters == None:
             new_parameters = {}
-        extra_in = {"-r": self.configuration_file, "-n": "index.ndx"}
+            new_keys = []
+        if new_keys == None:
+            new_keys = list(new_parameters.keys())
+        sim_name = "steered"
+        extra_in = {"-r": self.configuration_file,
+                    "-n": self.index_file}
         additions = {"in": extra_in}
-        self.mdp_settings["steered"] = new_parameters
+        newer_p = self.CV_mdp_dict.copy()
+        append_dict(newer_p, new_parameters,
+                    new_keys, self.CV_mdp_list)
+        new_parameters = newer_p
+        self.mdp_settings[sim_name] = new_parameters
+        self.mdp_settings[sim_name + "_keys"] = new_keys
+        file_add = ""
+        if self.is_solvated == 0:
+            file_add = "_v"
+        template = "mdp_templates/md_steered" + file_add + ".mdp.templ"
         prep = self.single_prep(name = "steered",
-                                template = "mdp_templates/md_steered_specific_v.mdp.templ",
+                                template = template,
                                 additions = additions)
-        self.single_run(prep)
+        self.single_run(prep, sim_name)
 
-    def swarm(self, new_parameters = None):
+    def swarm(self, new_parameters = None, new_keys = None):
         # Shorter MD run to be part of swarm of trajectories
         if new_parameters == None:
             new_parameters = {}
-        self.mdp_settings["swarm"] = new_parameters
+            new_keys = []
+        if new_keys == None:
+            new_keys = list(new_parameters.keys())
+        sim_name = "swarm"
+        additions = {}
+        self.mdp_settings[sim_name] = new_parameters
+        self.mdp_settings[sim_name + "_keys"] = new_keys
+        file_add = ""
+        if self.is_solvated == 0:
+            file_add = "_v"
+        template = "mdp_templates/md" + file_add + ".mdp.templ"
         prep = self.single_prep(name = "swarm",
-                                template = "mdp_templates/md_v.mdp.templ")
-        self.single_run(prep)
+                                template = template,
+                                additions =  additions)
+        self.single_run(prep, sim_name)

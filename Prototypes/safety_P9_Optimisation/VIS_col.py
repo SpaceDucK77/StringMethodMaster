@@ -82,7 +82,7 @@ class Distance(CV):
         super(Distance, self).__init__(pull_groups)
 
     def geometry(self):
-        return "dihedral"
+        return "distance"
 
     def mdp_groups(self):
         return str(self.pull_groups[0].pg_no) + " " + str(self.pull_groups[1].pg_no)
@@ -235,10 +235,15 @@ class VIS_collection:
             update_topol_file(self.topology)
             make_index(self.start, self.index)
             update_index_file(self.index, self.CVs, self.pull_groups)
-            startCVs = get_angle(self.start, self.index)
+            dihedrals_exist = len(self.CVs["dihedrals"]) != 0
+            startCVs = []
+            endCVs = []
+            if dihedrals_exist:
+                startCVs = get_angle(self.start, self.index)
             for dist in self.CVs["distances"]:
                 startCVs += get_distance (self.start, self.index, dist)
-            endCVs =  get_angle(self.end, self.index)
+            if dihedrals_exist:
+                endCVs =  get_angle(self.end, self.index)
             for dist in self.CVs["distances"]:
                 endCVs += get_distance (self.end, self.index, dist)
             self.end_pointCVs = [startCVs, endCVs]
@@ -254,9 +259,6 @@ class VIS_collection:
                                        index_file = self.index,
                                        pull_groups = self.pull_groups,
                                        solvated = self.solvated)
-            '''CV_states, delta = linear_interpolation(startCVs, endCVs,
-                                                         parts = self.beads,
-                                                         no_dih = len(self.CVs["dihedrals"]))'''
             if self.solvate and not self.solvated:
                 self.startVIS.solvate()
                 self.solvated = 1
@@ -317,7 +319,11 @@ class VIS_collection:
         sCV = self.startVIS.get_CVs()
         eCV = self.endVIS.get_CVs()
         CV_2D = list(self.CV_2D)
+<<<<<<< Updated upstream
         print(type(self.CV_2D))
+=======
+        CV_2D.sort(key = lambda x : self.CV_vis[x])
+>>>>>>> Stashed changes
         for i,CV1 in enumerate(CV_2D):
             CV1index = self.CV_vis[CV1]
             for CV2 in CV_2D[i+1:]:
