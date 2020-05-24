@@ -391,7 +391,7 @@ def make_index(c_file, o_file):
                                        output_files = {"-o": o_file},
                                        stdin = "q\n")
     maker.run()
-    log("make_index:\n", maker.output.erroroutput.result())
+    log("make_index:\n" + str(maker.output.erroroutput.result()))
 
 
 def mdp_create(file_name,

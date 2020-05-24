@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.interpolate as interp
 import scipy.integrate as integr
-import plotly.express as px
+#import plotly.express as px
 import VIS
 import os
 import pickle
@@ -53,7 +53,7 @@ def backup_file(file_name, copy):
     try:
         open(file_name)
     except FileNotFoundError:
-        return
+        return file_name
     while not done:
         bu_name = f1 + "_backup_" + str(backup_no) + "_." + f2
         try:
@@ -65,6 +65,8 @@ def backup_file(file_name, copy):
             else:
                 shutil.move(file_name, bu_name)
             done = True
+    return bu_name
+    
 
 def calc_splines(CVs):
     polys = []
@@ -105,7 +107,7 @@ def create_panda(start,
     frame = frame[names]
     return frame
 
-def create_string(start, end, intermediaries, delta, saves, opposites):
+def create_string(start, end, intermediaries, delta, opposites, saves, run_time = 500):
     starter = VIS.VIS.fresh_copy(start)
     n = len(intermediaries)
     if "path" in saves:
@@ -114,7 +116,7 @@ def create_string(start, end, intermediaries, delta, saves, opposites):
     else:
         cv_span={}
         for i in range(len(delta)):
-            cv_span["pull_coord" + str(i+1) +"_rate"] = delta[i]/500
+            cv_span["pull_coord" + str(i+1) +"_rate"] = delta[i] / run_time
         starter.steered(new_parameters = cv_span)
         print("---- Steered No crash ----")
         path = starter.split_traj()
@@ -381,14 +383,15 @@ def log(msg, file_name = "log.txt"):
     f.close()
 
 def make_index(c_file, o_file):
-    backup_file(o_file, copy = False)
+    b_file_name = backup_file(o_file, copy = False)
     maker =  gmx.commandline_operation(executable = "gmx",
                                        arguments = ["make_ndx"],
-                                       input_files = {"-f": c_file},
+                                       input_files = {"-f": c_file,
+                                                      "-n": b_file_name},
                                        output_files = {"-o": o_file},
                                        stdin = "q\n")
     maker.run()
-    print("make_index:\n", maker.output.erroroutput.result())
+    log("make_index:\n" + str(maker.output.erroroutput.result()))
 
 
 def mdp_create(file_name,
@@ -468,12 +471,6 @@ def normalise_lin(cv_traj, intermediaries, start, delta, opposites):
     print("delta", delta,"start", start, sep="\n")
     return traj, targets
 
-def sp_dim(number):
-    cols = (4/3*number) ** 0.5
-    rows = int(3/4*cols + 0.5)
-    cols = int(cols + 0.5)
-    return (rows, cols)
-
 def plot_iterations_2D(phie,
                        psie,
                        init_states,
@@ -482,7 +479,8 @@ def plot_iterations_2D(phie,
                        spdim = (2, 3),
                        select = 1,
                        savedir = None,
-                       CV_names = ["phi", "psi"]):
+                       CV_names = ["phi", "psi"],
+                       lw = 1):
     iters = len(iterations)
     #print(CV_index)
     #print("init_states: ", init_states)
@@ -495,12 +493,13 @@ def plot_iterations_2D(phie,
     else:
         size = [ppf * 0.4 * 6.4, ppf * 0.4 * 4.8]
     plt.figure(figsize = size)
-    plt.plot(phie,psie,"ro-", label = "Initial")
-    plt.plot(init_x, init_y, "x")
+    plt.plot(phie,psie,"ro-", label = "Initial", linewidth = lw)
+    plt.plot(init_x, init_y, "x", linewidth = lw)
     for i,string in enumerate(iterations[::select]):
         string.plot_CVs_2D(plt,
                            CV_index = CV_index,
-                           label = str(i*select+1))
+                           label = str(i*select+1),
+                           lw = lw)
     plt.xlabel(CV_names[0])
     plt.ylabel(CV_names[1])
     plt.title("Every " + str(select) + "th iteration, linear interpolation")
@@ -508,7 +507,8 @@ def plot_iterations_2D(phie,
     if savedir != None:
         plt.savefig(savedir+"/" + \
                     "".join([name.capitalize() for name in CV_names])\
-                    + "every" + str(select) + "iterations.png",
+                    + "every" + str(select) + "iterations_w" + str(lw) + \
+                    ".png",
                     dpi = 300)
         plt.close()
 
@@ -517,13 +517,14 @@ def plot_iterations_2D(phie,
     plt.figure(figsize = size)
     for i in range(subplots):
         plt.subplot(spdim[0], spdim[1], 1+i)
-        plt.plot(phie,psie,"ro-", label = "Initial")
-        plt.plot(init_x, init_y, "x")
+        plt.plot(phie,psie,"ro-", label = "Initial", linewidth = lw)
+        plt.plot(init_x, init_y, "x", linewidth = lw)
         for j in range(ppf*i,ppf*(i+1)):
             string = iterations[j]
             string.plot_CVs_2D(plt,
                                CV_index = CV_index,
-                               label = str(j+1))
+                               label = str(j+1),
+                               lw = lw)
         plt.title("Iterations " + str(ppf * i + 1) + " to " + str(ppf * (i + 1)))
         plt.xlabel(CV_names[0])
         plt.ylabel(CV_names[1])
@@ -532,7 +533,7 @@ def plot_iterations_2D(phie,
         plt.savefig(savedir+"/" + \
                     "".join([name.capitalize() for name in CV_names])\
                     + "iterations" + str(1) + "To" + str(subplots * ppf) +\
-                    ".png",
+                    "_w" + str(lw) +".png",
                     dpi = 300)
         plt.close()
     if savedir == None:
@@ -546,19 +547,21 @@ def plot_iter_splines_2D(phie,
                          select = 0,
                          ppf = 1,
                          savedir = None,
-                         CV_names = ["phi", "psi"]):
+                         CV_names = ["phi", "psi"],
+                         lw = 1):
     iters = len(iterations)
     if select is 0:
         select = range(iters)
     for i in select:
         if i % ppf == 0:
             plt.figure()
-            plt.plot(phie,psie,"ro-", label = "Initial", color = 'k')
-            plt.plot(init_states[:, CV_index[0]], init_states[:, CV_index[1]], "x")
+            plt.plot(phie,psie,"ro-", label = "Initial", color = 'k', linewidth = lw)
+            plt.plot(init_states[:, CV_index[0]], init_states[:, CV_index[1]], "x", linewidth = lw)
         string = iterations[i]
         string.plot_spline_curve(plt,
                                  CV_index = CV_index,
-                                 label = str(i+1))
+                                 label = str(i+1),
+                                 lw = lw)
         if (i - 1) % ppf == 0:
             plt.xlabel(CV_names[0])
             plt.ylabel(CV_names[0])
@@ -569,7 +572,7 @@ def plot_iter_splines_2D(phie,
                 plt.savefig(savedir+"/" + \
                             "".join([name.capitalize() for name in CV_names])\
                             + "Spline2DIter" + str(i) + "To" + \
-                            str(i + ppf - 1) + ".png",
+                            str(i + ppf - 1) + "_w" + str(lw) + ".png",
                             dpi = 300)
                 plt.close()
     if savedir == None:
@@ -582,6 +585,20 @@ def plot_sim_par_coords(panda_frame, savedir = None):
         fig.show()
     else:
         fig.write_html(savedir + "/parrallel_coordinates_plot.html")
+
+def read_index_file(file_name):
+    try:
+        f =  open(file_name)
+    except FileNotFoundError:
+        return {}
+    parts = f.read.split("[")
+    indexes = {}
+    for index in parts[1:]:
+        index = index.split("]\n")
+        key = index[0]
+        data = index[1]
+        indexes[key] = data
+    return indexes
 
 
 def read_mdp(file_name):
@@ -645,6 +662,12 @@ def reparameterise(CVs, opposites, dih_no):
 
 def save(data, file_name = "debug.pickle"):
     pickle.dump(data,open(file_name, "wb"))
+
+def sp_dim(number):
+    cols = (4/3*number) ** 0.5
+    rows = int(3/4*cols + 0.5)
+    cols = int(cols + 0.5)
+    return (rows, cols)
 
 def update_index_file(file_name = "index.ndx",
                       CVs = {},
