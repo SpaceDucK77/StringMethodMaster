@@ -17,7 +17,8 @@ P_FILE_DICT = {"name": ("name", str),
                "solvate": ("solvate", int),
                "max_iter": ("iterations", int),
                "max_conv": ("conv_limit", float),
-               "beads": ("beads", int)}
+               "beads": ("beads", int),
+               "steered_run_time": ("steer_run", float)}
 
 
 class Pull_group(frozenset):
@@ -100,6 +101,7 @@ class VIS_collection:
         self.conf = None
         self.index = None
         self.beads = None
+        self.steer_run = 500
         self.strings = []
         self.state = 0
         self.curr_iter = 0
@@ -125,7 +127,8 @@ class VIS_collection:
                                             intermediaries = self.CV_targets,
                                             delta = self.delta,
                                             opposites = self.opposites,
-                                            saves = self.temp_dict) #Final parameter should be removed
+                                            saves = self.temp_dict,
+                                            run_time = self.steer_run) #Final parameter should be removed
             self.state = 2.5
             save(self)
         if self.state == 2.5:
@@ -319,11 +322,7 @@ class VIS_collection:
         sCV = self.startVIS.get_CVs()
         eCV = self.endVIS.get_CVs()
         CV_2D = list(self.CV_2D)
-<<<<<<< Updated upstream
         print(type(self.CV_2D))
-=======
-        CV_2D.sort(key = lambda x : self.CV_vis[x])
->>>>>>> Stashed changes
         for i,CV1 in enumerate(CV_2D):
             CV1index = self.CV_vis[CV1]
             for CV2 in CV_2D[i+1:]:
@@ -430,7 +429,7 @@ class VIS_string:
                                    axis =0 )
         return self.start_CVs'''
 
-    def plot_CVs_2D(self, plotwindow, CV_index = (0,1), label = "A string"):
+    def plot_CVs_2D(self, plotwindow, CV_index = (0,1), label = "A string", lw = 1):
         #self.get_CV_start()
         #print("VIS_string plot_CVs_2D, self.start_CVs", self.start_CVs.shape)
         p = plotwindow.plot(self.start_CVs[1:-1, CV_index[0]],
@@ -438,9 +437,10 @@ class VIS_string:
         plotwindow.plot(self.start_CVs[:, CV_index[0]],
                         self.start_CVs[:, CV_index[1]],
                         p[0].get_color(),
-                        label = label)
+                        label = label,
+                        linewidth = lw)
 
-    def plot_spline_curve(self, plotwindow, CV_index = (0, 1), label = "A string"):
+    def plot_spline_curve(self, plotwindow, CV_index = (0, 1), label = "A string", lw =1):
         if "spline_data" not in dir(self) and self.state > 1:
             state = self.state
             if state == 2:
@@ -461,19 +461,23 @@ class VIS_string:
         y = splines[ydim](t) * deltas[ydim] + mins[ydim]
         p = plotwindow.plot(x,
                             y,
-                            label = "spline: " + label)
+                            label = "spline: " + label,
+                            linewidth = lw)
         plotwindow.plot(self.drift_CVs[1:-1, xdim],
                         #self.target_drifts[1:-1, xdim],
                         self.drift_CVs[1:-1, ydim], "o",
                         color = p[0].get_color(),
-                        label = "drift_CVs: " + label)
+                        label = "drift_CVs: " + label,
+                        linewidth = lw)
         plotwindow.plot(self.new_CVs[1:-1, xdim],
                         self.new_CVs[1:-1, ydim], "v",
                         color = p[0].get_color(),
-                        label = "new_CVs: " + label)
+                        label = "new_CVs: " + label,
+                        linewidth = lw)
         plotwindow.plot(self.start_CVs[:, xdim],
                         self.start_CVs[:, ydim],
-                        label = "start_CVs: " + label)
+                        label = "start_CVs: " + label,
+                        linewidth = lw)
 
     def prep_new_CVs(self, opposites, redo = False):
         if self.state == 2 or (redo and self.state > 2):
