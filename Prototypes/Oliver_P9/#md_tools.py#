@@ -107,7 +107,7 @@ def create_panda(start,
     frame = frame[names]
     return frame
 
-def create_string(start, end, intermediaries, delta, saves, opposites, run_time = 500):
+def create_string(start, end, intermediaries, delta, opposites, saves, run_time = 500):
     starter = VIS.VIS.fresh_copy(start)
     n = len(intermediaries)
     if "path" in saves:

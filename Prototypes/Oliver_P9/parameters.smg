@@ -3,6 +3,7 @@ start_conf    = start.gro   # starting position configuration file name
 end_conf      = end.gro     # ending position configuration file name
 topology_file = topol_orig.top   # topology fil name
 struct_index  = index.ndx   # index file for substructures of configuration
+steered_run_time = 50000    # ps of initial steered run
 solvated      = 0           # starting configuration file is 0 => not solvated, 1 => solvated
 solvate       = 0           # 1 => solvate unsolvated initial configuration, 0 => don't
 max_iter      = 100           # Maximum number of iterations for this run
