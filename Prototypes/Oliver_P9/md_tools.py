@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.interpolate as interp
 import scipy.integrate as integr
-#import plotly.express as px
+import plotly.express as px
 import VIS
 import os
 import pickle
@@ -53,7 +53,7 @@ def backup_file(file_name, copy):
     try:
         open(file_name)
     except FileNotFoundError:
-        return file_name
+        return
     while not done:
         bu_name = f1 + "_backup_" + str(backup_no) + "_." + f2
         try:
@@ -65,8 +65,6 @@ def backup_file(file_name, copy):
             else:
                 shutil.move(file_name, bu_name)
             done = True
-    return bu_name
-    
 
 def calc_splines(CVs):
     polys = []
@@ -107,7 +105,7 @@ def create_panda(start,
     frame = frame[names]
     return frame
 
-def create_string(start, end, intermediaries, delta, saves, opposites, run_time = 500):
+def create_string(start, end, intermediaries, delta, saves, opposites):
     starter = VIS.VIS.fresh_copy(start)
     n = len(intermediaries)
     if "path" in saves:
@@ -116,7 +114,7 @@ def create_string(start, end, intermediaries, delta, saves, opposites, run_time 
     else:
         cv_span={}
         for i in range(len(delta)):
-            cv_span["pull_coord" + str(i+1) +"_rate"] = delta[i] / run_time
+            cv_span["pull_coord" + str(i+1) +"_rate"] = delta[i]/500
         starter.steered(new_parameters = cv_span)
         print("---- Steered No crash ----")
         path = starter.split_traj()
@@ -383,15 +381,14 @@ def log(msg, file_name = "log.txt"):
     f.close()
 
 def make_index(c_file, o_file):
-    b_file_name = backup_file(o_file, copy = False)
+    backup_file(o_file, copy = False)
     maker =  gmx.commandline_operation(executable = "gmx",
                                        arguments = ["make_ndx"],
-                                       input_files = {"-f": c_file,
-                                                      "-n": b_file_name},
+                                       input_files = {"-f": c_file},
                                        output_files = {"-o": o_file},
                                        stdin = "q\n")
     maker.run()
-    log("make_index:\n", maker.output.erroroutput.result())
+    print("make_index:\n", maker.output.erroroutput.result())
 
 
 def mdp_create(file_name,
@@ -470,6 +467,12 @@ def normalise_lin(cv_traj, intermediaries, start, delta, opposites):
         print(one_target)
     print("delta", delta,"start", start, sep="\n")
     return traj, targets
+
+def sp_dim(number):
+    cols = (4/3*number) ** 0.5
+    rows = int(3/4*cols + 0.5)
+    cols = int(cols + 0.5)
+    return (rows, cols)
 
 def plot_iterations_2D(phie,
                        psie,
@@ -586,20 +589,6 @@ def plot_sim_par_coords(panda_frame, savedir = None):
     else:
         fig.write_html(savedir + "/parrallel_coordinates_plot.html")
 
-def read_index_file(file_name):
-    try:
-        f =  open(file_name)
-    except FileNotFoundError:
-        return {}
-    parts = f.read.split("[")
-    indexes = {}
-    for index in parts[1:]:
-        index = index.split("]\n")
-        key = index[0]
-        data = index[1]
-        indexes[key] = data
-    return indexes
-
 
 def read_mdp(file_name):
     file =  open(file_name)
@@ -662,12 +651,6 @@ def reparameterise(CVs, opposites, dih_no):
 
 def save(data, file_name = "debug.pickle"):
     pickle.dump(data,open(file_name, "wb"))
-
-def sp_dim(number):
-    cols = (4/3*number) ** 0.5
-    rows = int(3/4*cols + 0.5)
-    cols = int(cols + 0.5)
-    return (rows, cols)
 
 def update_index_file(file_name = "index.ndx",
                       CVs = {},
