@@ -82,7 +82,7 @@ class Distance(CV):
         super(Distance, self).__init__(pull_groups)
 
     def geometry(self):
-        return "dihedral"
+        return "distance"
 
     def mdp_groups(self):
         return str(self.pull_groups[0].pg_no) + " " + str(self.pull_groups[1].pg_no)
@@ -235,10 +235,15 @@ class VIS_collection:
             update_topol_file(self.topology)
             make_index(self.start, self.index)
             update_index_file(self.index, self.CVs, self.pull_groups)
-            startCVs = get_angle(self.start, self.index)
+            dihedrals_exist = len(self.CVs["dihedrals"]) != 0
+            startCVs = []
+            endCVs = []
+            if dihedrals_exist:
+                startCVs = get_angle(self.start, self.index)
             for dist in self.CVs["distances"]:
                 startCVs += get_distance (self.start, self.index, dist)
-            endCVs =  get_angle(self.end, self.index)
+            if dihedrals_exist:
+                endCVs =  get_angle(self.end, self.index)
             for dist in self.CVs["distances"]:
                 endCVs += get_distance (self.end, self.index, dist)
             self.end_pointCVs = [startCVs, endCVs]
@@ -254,9 +259,6 @@ class VIS_collection:
                                        index_file = self.index,
                                        pull_groups = self.pull_groups,
                                        solvated = self.solvated)
-            '''CV_states, delta = linear_interpolation(startCVs, endCVs,
-                                                         parts = self.beads,
-                                                         no_dih = len(self.CVs["dihedrals"]))'''
             if self.solvate and not self.solvated:
                 self.startVIS.solvate()
                 self.solvated = 1
@@ -309,7 +311,7 @@ class VIS_collection:
             save(self)
         print("self.state:", self.state)
 
-    def visualisations(self):
+    def visualisations(self, lw = 1):
         if self.state != 4:
             return
         if not os.path.isdir("plots"):
@@ -317,7 +319,6 @@ class VIS_collection:
         sCV = self.startVIS.get_CVs()
         eCV = self.endVIS.get_CVs()
         CV_2D = list(self.CV_2D)
-        print(type(self.CV_2D))
         for i,CV1 in enumerate(CV_2D):
             CV1index = self.CV_vis[CV1]
             for CV2 in CV_2D[i+1:]:
@@ -327,8 +328,6 @@ class VIS_collection:
 
                 istates = np.array(self.CV_targets)
                 CV_names = [CV1, CV2]
-                print("VIS_coll CV_index: ", (CV1index, CV2index))
-                print("VIS_coll CV_names: ", CV_names)
 
                 plot_iterations_2D(phie,
                                    psie,
@@ -338,7 +337,8 @@ class VIS_collection:
                                    spdim = sp_dim(len(self.strings) // 5 + 1),
                                    select = 3,
                                    savedir = "plots",
-                                   CV_names = CV_names)
+                                   CV_names = CV_names,
+                                   lw = lw)
                 plot_iter_splines_2D(phie,
                                      psie,
                                      istates,
@@ -347,7 +347,8 @@ class VIS_collection:
                                      select = list(range(len(self.strings))),
                                      ppf = 2,
                                      savedir = "plots",
-                                     CV_names = CV_names)
+                                     CV_names = CV_names,
+                                     lw = lw)
                 frame = create_panda(sCV,
                                      eCV,
                                      istates,
@@ -424,7 +425,7 @@ class VIS_string:
                                    axis =0 )
         return self.start_CVs'''
 
-    def plot_CVs_2D(self, plotwindow, CV_index = (0,1), label = "A string"):
+    def plot_CVs_2D(self, plotwindow, CV_index = (0,1), label = "A string", lw = 1):
         #self.get_CV_start()
         #print("VIS_string plot_CVs_2D, self.start_CVs", self.start_CVs.shape)
         p = plotwindow.plot(self.start_CVs[1:-1, CV_index[0]],
@@ -432,9 +433,10 @@ class VIS_string:
         plotwindow.plot(self.start_CVs[:, CV_index[0]],
                         self.start_CVs[:, CV_index[1]],
                         p[0].get_color(),
-                        label = label)
+                        label = label,
+                        linewidth = lw)
 
-    def plot_spline_curve(self, plotwindow, CV_index = (0, 1), label = "A string"):
+    def plot_spline_curve(self, plotwindow, CV_index = (0, 1), label = "A string", lw =1):
         if "spline_data" not in dir(self) and self.state > 1:
             state = self.state
             if state == 2:
@@ -455,19 +457,23 @@ class VIS_string:
         y = splines[ydim](t) * deltas[ydim] + mins[ydim]
         p = plotwindow.plot(x,
                             y,
-                            label = "spline: " + label)
+                            label = "spline: " + label,
+                            linewidth = lw)
         plotwindow.plot(self.drift_CVs[1:-1, xdim],
                         #self.target_drifts[1:-1, xdim],
                         self.drift_CVs[1:-1, ydim], "o",
                         color = p[0].get_color(),
-                        label = "drift_CVs: " + label)
+                        label = "drift_CVs: " + label,
+                        linewidth = lw)
         plotwindow.plot(self.new_CVs[1:-1, xdim],
                         self.new_CVs[1:-1, ydim], "v",
                         color = p[0].get_color(),
-                        label = "new_CVs: " + label)
+                        label = "new_CVs: " + label,
+                        linewidth = lw)
         plotwindow.plot(self.start_CVs[:, xdim],
                         self.start_CVs[:, ydim],
-                        label = "start_CVs: " + label)
+                        label = "start_CVs: " + label,
+                        linewidth = lw)
 
     def prep_new_CVs(self, opposites, redo = False):
         if self.state == 2 or (redo and self.state > 2):
@@ -589,13 +595,4 @@ class VIS_swarm:
 
 
 
-if __name__ == "__main__":
-    a = load()
-    if a =={}:
-        shutil.copyfile("topol_orig.top", "topol.top")
-        a = VIS_collection("parameters.smg")
-    a.parse_parameters()
-    a.prepare_endpoints()
-    a.create_base_string()
-    a.run_method()
-    a.visualisations()
+

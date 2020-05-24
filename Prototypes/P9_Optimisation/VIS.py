@@ -169,6 +169,44 @@ class VIS:
         pc = "pull_coord"
         keys = ["_type", "_geometry", "_dim",
                 "_groups", "_start", "_rate", "_k"]
+        for cv_type in self.CV_def:
+            for cv in self.CV_def[cv_type]:
+                st_dict = {"_type": "umbrella",
+                           "_geometry": None,
+                           "_dim": "Y Y Y",
+                           "_groups": None,
+                           "_start": "yes",
+                           "_rate": "0",
+                           "_k": "1000"}.copy()
+                i += 1
+                st_dict["_geometry"] = cv.geometry()
+                st_dict["_groups"] = cv.mdp_groups()
+                for stat in keys:
+                    slist.append(pc + str(i) + stat)
+                    sdict[pc + str(i) + stat] = st_dict[stat]
+
+
+    def generate_CV_mdp_dict(self):
+        self.CV_mdp_list = []
+        slist = self.CV_mdp_list
+        self.CV_mdp_dict = {}
+        sdict = self.CV_mdp_dict
+        slist.append("\n; Pull code")
+        sdict["\n; Pull code"] = ""
+        slist.append("pull")
+        sdict["pull"] = "yes"
+        slist.append("pull_ncoords")
+        sdict["pull_ncoords"] = str(sum([len(self.CV_def[i]) for i in self.CV_def]))
+        slist.append("pull_ngroups")
+        sdict["pull_ngroups"] = str(len(self.pull_groups))
+        for i, group in enumerate(self.pull_groups):
+            key = "pull_group" + str(i+1) + "_name"
+            slist.append(key)
+            sdict[key] = group.get_name()
+        i = 0
+        pc = "pull_coord"
+        keys = ["_type", "_geometry", "_dim",
+                "_groups", "_start", "_rate", "_k"]
         st_dict = {"_type": "umbrella",
                    "_geometry": None,
                    "_dim": "Y Y Y",

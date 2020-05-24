@@ -4,7 +4,7 @@ end_conf      = end.gro     # ending position configuration file name
 topology_file = topol.top   # topology fil name
 struct_index  = index.ndx   # index file for substructures of configuration
 solvated      = 0           # starting configuration file is 0 => not solvated, 1 => solvated
-solvate       = 0           # 1 => solvate unsolvated initial configuration, 0 => don't
+solvate       = 1           # 1 => solvate unsolvated initial configuration, 0 => don't
 max_iter      = 30           # Maximum number of iterations for this run
 max_conv      = 0           # Maximum value of convergence measurement allowed for early stopping.
                             # Not satisfactorily implemented
@@ -22,10 +22,10 @@ beads         = 10          # Number of beads/VISs on string
                             # An asterisk (*) at the end indicates it is to be included in 2D plots
 # Format:
 # name          = in CV declaration order, first CV declared is no 0.
-theta         = 0
+theta         = 0*
 phi           = 1*
 psi           = 2*
-zeta          = 3
+zeta          = 3*
 
 ***
 Everything after the first *** in the file will be ignored, so it can be used freely
