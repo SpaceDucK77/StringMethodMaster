@@ -93,6 +93,8 @@ class VIS_collection:
     """ A collection of several iterations. """
 
     def __init__(self, parameter_file):
+        print("Init VIS_COLLECTION")
+        print(parameter_file)
         self.parameter_file = parameter_file
         self.name = "String_method"
         self.start = None
@@ -127,8 +129,8 @@ class VIS_collection:
                                             intermediaries = self.CV_targets,
                                             delta = self.delta,
                                             opposites = self.opposites,
-                                            saves = self.temp_dict,
-                                            run_time = self.steer_run) #Final parameter should be removed
+                                            saves = self.temp_dict) #,
+                                           # run_time = self.steer_run) #Final parameter should be removed
             self.state = 2.5
             save(self)
         if self.state == 2.5:
