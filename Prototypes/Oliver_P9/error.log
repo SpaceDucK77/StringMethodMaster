@@ -1,3 +1,4 @@
+ModuleCmd_Switch.c(179):ERROR:152: Module 'PrgEnv-cray' is currently not loaded
 Switching to atp/2.1.3.
 Switching to cray-libsci/19.06.1.
 Switching to cray-mpich/7.7.8.
@@ -10,10 +11,10 @@ srun: error: Invalid user id 1504: No error
 srun: Warning: Unable to assume uid=1504
 Reading file em_r.tpr, VERSION 2020.1 (single precision)
 Reading file em_r.tpr, VERSION 2020.1 (single precision)
-Reading file /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9/mdrun_0_-9223369104792111563_0/topol.tpr, VERSION 2020.1 (single precision)
+Reading file /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9/mdrun_0_2932062665515_0/topol.tpr, VERSION 2020.1 (single precision)
 Compiled SIMD: AVX_256, but for this host/run AVX2_256 might be better (see
 log).
-Reading file /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9/mdrun_0_-9223369104792111563_0/topol.tpr, VERSION 2020.1 (single precision)
+Reading file /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9/mdrun_0_2932062665515_0/topol.tpr, VERSION 2020.1 (single precision)
 Using 1 OpenMP thread 
 
 
@@ -40,5 +41,5 @@ steered.tpr
 For more information and tips for troubleshooting, please check the GROMACS
 website at http://www.gromacs.org/Documentation/Errors
 -------------------------------------------------------
-srun: error: nid01754: task 0: Exited with exit code 1
-srun: Terminating job step 5891132.0
+srun: error: nid00448: task 0: Exited with exit code 1
+srun: Terminating job step 5894554.0

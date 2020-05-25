@@ -1,0 +1,320 @@
+Pull groups
+Dihedrals
+Distances
+[Pull_group({863}), Pull_group({4334})]
+[Pull_group({3340}), Pull_group({1971})]
+[Pull_group({4334}), Pull_group({1971})]
+[Pull_group({1462}), Pull_group({3459})]
+[Pull_group({3203}), Pull_group({3318})]
+---- EM ----
+input_files:
+{'-f': 'em_r.mdp', '-c': 'start.gro', '-p': 'topol.top'}
+output_files:
+{'-o': 'em_r.tpr'}
+
+
+
+prep em_r:
+
+
+---- EM ----
+input_files:
+{'-f': 'em_r.mdp', '-c': 'start.gro', '-p': 'topol.top'}
+output_files:
+{'-o': 'em_r.tpr'}
+
+
+
+prep em_r:
+
+
+input_files:
+{'-f': 'steered.mdp', '-c': '/cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9/mdrun_0_2932062663474_0/confout.gro', '-p': 'topol.top'}
+output_files:
+{'-o': 'steered.tpr'}
+
+
+
+prep steered:
+                      :-) GROMACS - gmx grompp, 2020.1 (-:
+
+                            GROMACS is written by:
+     Emile Apol      Rossen Apostolov      Paul Bauer     Herman J.C. Berendsen
+    Par Bjelkmar      Christian Blau   Viacheslav Bolnykh     Kevin Boyd    
+ Aldert van Buuren   Rudi van Drunen     Anton Feenstra       Alan Gray     
+  Gerrit Groenhof     Anca Hamuraru    Vincent Hindriksen  M. Eric Irrgang  
+  Aleksei Iupinov   Christoph Junghans     Joe Jordan     Dimitrios Karkoulis
+    Peter Kasson        Jiri Kraus      Carsten Kutzner      Per Larsson    
+  Justin A. Lemkul    Viveca Lindahl    Magnus Lundborg     Erik Marklund   
+    Pascal Merz     Pieter Meulenhoff    Teemu Murtola       Szilard Pall   
+    Sander Pronk      Roland Schulz      Michael Shirts    Alexey Shvetsov  
+   Alfons Sijbers     Peter Tieleman      Jon Vincent      Teemu Virolainen 
+ Christian Wennberg    Maarten Wolf      Artem Zhmurov   
+                           and the project leaders:
+        Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
+
+Copyright (c) 1991-2000, University of Groningen, The Netherlands.
+Copyright (c) 2001-2019, The GROMACS development team at
+Uppsala University, Stockholm University and
+the Royal Institute of Technology, Sweden.
+check out http://www.gromacs.org for more information.
+
+GROMACS is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 2.1
+of the License, or (at your option) any later version.
+
+GROMACS:      gmx grompp, version 2020.1
+Executable:   /pdc/vol/gromacs/2020.1/bin/gmx
+Data prefix:  /pdc/vol/gromacs/2020.1
+Working dir:  /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9
+Command line:
+  gmx grompp -f steered.mdp -c /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9/mdrun_0_2932062663474_0/confout.gro -p topol.top -r /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9/mdrun_0_2932062663474_0/confout.gro -n index.ndx -o steered.tpr
+
+Ignoring obsolete mdp entry 'optimize_fft'
+Replacing old mdp entry 'nstxtcout' by 'nstxout-compressed'
+
+NOTE 1 [file steered.mdp]:
+  nstcomm < nstcalcenergy defeats the purpose of nstcalcenergy, setting
+  nstcomm to nstcalcenergy
+
+
+NOTE 2 [file steered.mdp]:
+  leapfrog does not yet support Nose-Hoover chains, nhchainlength reset to 1
+
+Setting the LD random seed to -235478991
+Generated 1948 of the 1953 non-bonded parameter combinations
+Generating 1-4 interactions: fudge = 1
+Generated 1036 of the 1953 1-4 parameter combinations
+Excluding 3 bonded neighbours molecule type 'PROA'
+Excluding 3 bonded neighbours molecule type 'PROB'
+Excluding 3 bonded neighbours molecule type 'POPC'
+Excluding 2 bonded neighbours molecule type 'TIP3'
+Excluding 1 bonded neighbours molecule type 'SOD'
+Excluding 1 bonded neighbours molecule type 'CLA'
+
+-------------------------------------------------------
+Program:     gmx grompp, version 2020.1
+Source file: src/gromacs/gmxpreprocess/readir.cpp (line 2783)
+
+Fatal error:
+67049 atoms are not part of any of the T-Coupling groups
+
+For more information and tips for troubleshooting, please check the GROMACS
+website at http://www.gromacs.org/Documentation/Errors
+-------------------------------------------------------
+turning all bonds into constraints...
+turning all bonds into constraints...
+turning all bonds into constraints...
+turning all bonds into constraints...
+turning all bonds into constraints...
+turning all bonds into constraints...
+
+
+Pull groups
+Dihedrals
+Distances
+[Pull_group({863}), Pull_group({4334})]
+[Pull_group({3340}), Pull_group({1971})]
+[Pull_group({4334}), Pull_group({1971})]
+[Pull_group({1462}), Pull_group({3459})]
+[Pull_group({3203}), Pull_group({3318})]
+---- EM ----
+input_files:
+{'-f': 'em_r.mdp', '-c': 'start.gro', '-p': 'topol.top'}
+output_files:
+{'-o': 'em_r.tpr'}
+
+
+
+prep em_r:
+
+
+input_files:
+{'-f': 'steered.mdp', '-c': '/cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9/mdrun_0_2932062665522_0/confout.gro', '-p': 'topol.top'}
+output_files:
+{'-o': 'steered.tpr'}
+
+
+
+prep steered:
+                      :-) GROMACS - gmx grompp, 2020.1 (-:
+
+                            GROMACS is written by:
+     Emile Apol      Rossen Apostolov      Paul Bauer     Herman J.C. Berendsen
+    Par Bjelkmar      Christian Blau   Viacheslav Bolnykh     Kevin Boyd    
+ Aldert van Buuren   Rudi van Drunen     Anton Feenstra       Alan Gray     
+  Gerrit Groenhof     Anca Hamuraru    Vincent Hindriksen  M. Eric Irrgang  
+  Aleksei Iupinov   Christoph Junghans     Joe Jordan     Dimitrios Karkoulis
+    Peter Kasson        Jiri Kraus      Carsten Kutzner      Per Larsson    
+  Justin A. Lemkul    Viveca Lindahl    Magnus Lundborg     Erik Marklund   
+    Pascal Merz     Pieter Meulenhoff    Teemu Murtola       Szilard Pall   
+    Sander Pronk      Roland Schulz      Michael Shirts    Alexey Shvetsov  
+   Alfons Sijbers     Peter Tieleman      Jon Vincent      Teemu Virolainen 
+ Christian Wennberg    Maarten Wolf      Artem Zhmurov   
+                           and the project leaders:
+        Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
+
+Copyright (c) 1991-2000, University of Groningen, The Netherlands.
+Copyright (c) 2001-2019, The GROMACS development team at
+Uppsala University, Stockholm University and
+the Royal Institute of Technology, Sweden.
+check out http://www.gromacs.org for more information.
+
+GROMACS is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 2.1
+of the License, or (at your option) any later version.
+
+GROMACS:      gmx grompp, version 2020.1
+Executable:   /pdc/vol/gromacs/2020.1/bin/gmx
+Data prefix:  /pdc/vol/gromacs/2020.1
+Working dir:  /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9
+Command line:
+  gmx grompp -f steered.mdp -c /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9/mdrun_0_2932062665522_0/confout.gro -p topol.top -r /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9/mdrun_0_2932062665522_0/confout.gro -n index.ndx -o steered.tpr
+
+Ignoring obsolete mdp entry 'optimize_fft'
+Replacing old mdp entry 'nstxtcout' by 'nstxout-compressed'
+
+NOTE 1 [file steered.mdp]:
+  nstcomm < nstcalcenergy defeats the purpose of nstcalcenergy, setting
+  nstcomm to nstcalcenergy
+
+
+NOTE 2 [file steered.mdp]:
+  leapfrog does not yet support Nose-Hoover chains, nhchainlength reset to 1
+
+Setting the LD random seed to -446204991
+Generated 1948 of the 1953 non-bonded parameter combinations
+Generating 1-4 interactions: fudge = 1
+Generated 1036 of the 1953 1-4 parameter combinations
+Excluding 3 bonded neighbours molecule type 'PROA'
+Excluding 3 bonded neighbours molecule type 'PROB'
+Excluding 3 bonded neighbours molecule type 'POPC'
+Excluding 2 bonded neighbours molecule type 'TIP3'
+Excluding 1 bonded neighbours molecule type 'SOD'
+Excluding 1 bonded neighbours molecule type 'CLA'
+
+-------------------------------------------------------
+Program:     gmx grompp, version 2020.1
+Source file: src/gromacs/gmxpreprocess/readir.cpp (line 2783)
+
+Fatal error:
+67049 atoms are not part of any of the T-Coupling groups
+
+For more information and tips for troubleshooting, please check the GROMACS
+website at http://www.gromacs.org/Documentation/Errors
+-------------------------------------------------------
+turning all bonds into constraints...
+turning all bonds into constraints...
+turning all bonds into constraints...
+turning all bonds into constraints...
+turning all bonds into constraints...
+turning all bonds into constraints...
+
+
+Pull groups
+Dihedrals
+Distances
+[Pull_group({863}), Pull_group({4334})]
+[Pull_group({3340}), Pull_group({1971})]
+[Pull_group({4334}), Pull_group({1971})]
+[Pull_group({1462}), Pull_group({3459})]
+[Pull_group({3203}), Pull_group({3318})]
+---- EM ----
+input_files:
+{'-f': 'em_r.mdp', '-c': 'start.gro', '-p': 'topol.top'}
+output_files:
+{'-o': 'em_r.tpr'}
+
+
+
+prep em_r:
+
+
+input_files:
+{'-f': 'steered.mdp', '-c': '/cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9/mdrun_0_2932062665515_0/confout.gro', '-p': 'topol.top'}
+output_files:
+{'-o': 'steered.tpr'}
+
+
+
+prep steered:
+                      :-) GROMACS - gmx grompp, 2020.1 (-:
+
+                            GROMACS is written by:
+     Emile Apol      Rossen Apostolov      Paul Bauer     Herman J.C. Berendsen
+    Par Bjelkmar      Christian Blau   Viacheslav Bolnykh     Kevin Boyd    
+ Aldert van Buuren   Rudi van Drunen     Anton Feenstra       Alan Gray     
+  Gerrit Groenhof     Anca Hamuraru    Vincent Hindriksen  M. Eric Irrgang  
+  Aleksei Iupinov   Christoph Junghans     Joe Jordan     Dimitrios Karkoulis
+    Peter Kasson        Jiri Kraus      Carsten Kutzner      Per Larsson    
+  Justin A. Lemkul    Viveca Lindahl    Magnus Lundborg     Erik Marklund   
+    Pascal Merz     Pieter Meulenhoff    Teemu Murtola       Szilard Pall   
+    Sander Pronk      Roland Schulz      Michael Shirts    Alexey Shvetsov  
+   Alfons Sijbers     Peter Tieleman      Jon Vincent      Teemu Virolainen 
+ Christian Wennberg    Maarten Wolf      Artem Zhmurov   
+                           and the project leaders:
+        Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
+
+Copyright (c) 1991-2000, University of Groningen, The Netherlands.
+Copyright (c) 2001-2019, The GROMACS development team at
+Uppsala University, Stockholm University and
+the Royal Institute of Technology, Sweden.
+check out http://www.gromacs.org for more information.
+
+GROMACS is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 2.1
+of the License, or (at your option) any later version.
+
+GROMACS:      gmx grompp, version 2020.1
+Executable:   /pdc/vol/gromacs/2020.1/bin/gmx
+Data prefix:  /pdc/vol/gromacs/2020.1
+Working dir:  /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9
+Command line:
+  gmx grompp -f steered.mdp -c /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9/mdrun_0_2932062665515_0/confout.gro -p topol.top -r /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9/mdrun_0_2932062665515_0/confout.gro -n index.ndx -o steered.tpr
+
+Ignoring obsolete mdp entry 'optimize_fft'
+Replacing old mdp entry 'nstxtcout' by 'nstxout-compressed'
+
+NOTE 1 [file steered.mdp]:
+  nstcomm < nstcalcenergy defeats the purpose of nstcalcenergy, setting
+  nstcomm to nstcalcenergy
+
+
+NOTE 2 [file steered.mdp]:
+  leapfrog does not yet support Nose-Hoover chains, nhchainlength reset to 1
+
+Setting the LD random seed to -1546224700
+Generated 1948 of the 1953 non-bonded parameter combinations
+Generating 1-4 interactions: fudge = 1
+Generated 1036 of the 1953 1-4 parameter combinations
+Excluding 3 bonded neighbours molecule type 'PROA'
+Excluding 3 bonded neighbours molecule type 'PROB'
+Excluding 3 bonded neighbours molecule type 'POPC'
+Excluding 2 bonded neighbours molecule type 'TIP3'
+Excluding 1 bonded neighbours molecule type 'SOD'
+Excluding 1 bonded neighbours molecule type 'CLA'
+
+-------------------------------------------------------
+Program:     gmx grompp, version 2020.1
+Source file: src/gromacs/gmxpreprocess/readir.cpp (line 2701)
+
+Fatal error:
+Group PROT referenced in the .mdp file was not found in the index file.
+Group names must match either [moleculetype] names or custom index group
+names, in which case you must supply an index file to the '-n' option
+of grompp.
+
+For more information and tips for troubleshooting, please check the GROMACS
+website at http://www.gromacs.org/Documentation/Errors
+-------------------------------------------------------
+turning all bonds into constraints...
+turning all bonds into constraints...
+turning all bonds into constraints...
+turning all bonds into constraints...
+turning all bonds into constraints...
+turning all bonds into constraints...
+
+
