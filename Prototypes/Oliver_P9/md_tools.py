@@ -392,7 +392,6 @@ def make_index(c_file, o_file):
                                        stdin = "q\n")
     maker.run()
     log("make_index:\n" + str(maker.output.erroroutput.result()))
-    raise VIS.ExceptionDebugger("make_index")
 
 
 def mdp_create(file_name,
