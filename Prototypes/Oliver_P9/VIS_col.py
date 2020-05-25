@@ -17,7 +17,8 @@ P_FILE_DICT = {"name": ("name", str),
                "solvate": ("solvate", int),
                "max_iter": ("iterations", int),
                "max_conv": ("conv_limit", float),
-               "beads": ("beads", int)}
+               "beads": ("beads", int),
+               "steered_run_time": ("steer_run", float)}
 
 
 class Pull_group(frozenset):
@@ -100,6 +101,7 @@ class VIS_collection:
         self.conf = None
         self.index = None
         self.beads = None
+        self.steer_run = 500
         self.strings = []
         self.state = 0
         self.curr_iter = 0
@@ -125,7 +127,8 @@ class VIS_collection:
                                             intermediaries = self.CV_targets,
                                             delta = self.delta,
                                             opposites = self.opposites,
-                                            saves = self.temp_dict) #Final parameter should be removed
+                                            saves = self.temp_dict,
+                                            run_time = self.steer_run) #Final parameter should be removed
             self.state = 2.5
             save(self)
         if self.state == 2.5:
