@@ -381,14 +381,15 @@ def log(msg, file_name = "log.txt"):
     f.close()
 
 def make_index(c_file, o_file):
-    backup_file(o_file, copy = False)
+    b_file_name = backup_file(o_file, copy = False)
     maker =  gmx.commandline_operation(executable = "gmx",
                                        arguments = ["make_ndx"],
-                                       input_files = {"-f": c_file},
+                                       input_files = {"-f": c_file,
+                                                      "-n": b_file_name},
                                        output_files = {"-o": o_file},
                                        stdin = "q\n")
     maker.run()
-    print("make_index:\n", maker.output.erroroutput.result())
+    log("make_index:\n" + str(maker.output.erroroutput.result()))
 
 
 def mdp_create(file_name,
