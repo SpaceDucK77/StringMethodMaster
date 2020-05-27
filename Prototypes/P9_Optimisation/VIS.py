@@ -11,6 +11,7 @@ import shutil
 from md_tools import *
 
 class DeprecatedError(Exception):
+    # Useful class for removing unwanted code
     pass
 
 class VIS:
@@ -26,9 +27,9 @@ class VIS:
                  solvated = 0,
                  restrain_file = "cv_restraints.itp",
                  generate_CV_mdp_dict = True):
+        # Constructor, sets initial values
         self.mdp_settings = {} # Specific .mdp settings for this system.
         self.configuration_file = conf # .gro file_name with configuration
-        # self.start_conf = conf # for reference
 
         """ The following two aren't meant to be edited. """
         self.CV_keys = [] # names of CVs
@@ -42,11 +43,10 @@ class VIS:
         self.restrain_file = restrain_file
         self.history = [] #directories for all runs
         self.is_solvated = solvated # 1: solvated, 0: vacuum
-        # self.cv_index_file = index_file # CV index file name, to be replaced
         self.index_file = index_file
         self.topology_file = topology_file
         self.latest_path = "" # Directory path of the latest run.
-        
+
         self.CV_mdp_list = None
         self.CV_mdp_dict = None
         if generate_CV_mdp_dict == True:
@@ -61,7 +61,6 @@ class VIS:
                                         output_files= {"-o": "box" + file_name})
         box.run()
         shutil.move("box" + file_name, file_name)
-        # os.remove("#" + file_name  + "#")
 
 
     def create_restrain_file(self):
@@ -94,6 +93,7 @@ class VIS:
         t_file.close()"""
 
     def delete_runs(self):
+        # Clears Hard drive space
         for path in self.history:
             log("clearing: " + path)
             for file_name in os.listdir(path):
@@ -102,7 +102,7 @@ class VIS:
                 file_name = path + file_name
                 if os.path.isfile(file_name):
                     os.remove(file_name)
-            
+
 
     def EM(self, new_parameters = None, new_keys = None, restrain_cv = False):
         # Sets up for an EM MD run preparation
@@ -121,7 +121,7 @@ class VIS:
             new_parameters = newer_p
             extra_in = {"-r": self.configuration_file, "-n": "index.ndx"}
             additions = {"in": extra_in}
- 
+
         self.mdp_settings[sim_name] = new_parameters
         self.mdp_settings[sim_name + "_keys"] = new_keys
         prep = self.single_prep(name = sim_name,
@@ -139,7 +139,7 @@ class VIS:
                    pull_groups = original.pull_groups,
                    solvated =  original.is_solvated,
                    generate_CV_mdp_dict = False)
-        #copy.mdp_settings = original.mdp_settings
+        #Creates a fresh copy of a VIS
         copy.CV_keys = original.CV_keys
         copy.CV_info = original.CV_info
         copy.is_ready = original.is_ready
@@ -149,6 +149,7 @@ class VIS:
         return copy
 
     def generate_CV_mdp_dict(self):
+        # Generates a dictionary with .mdo keys and parameters
         self.CV_mdp_list = []
         slist = self.CV_mdp_list
         self.CV_mdp_dict = {}
@@ -184,9 +185,10 @@ class VIS:
                 for stat in keys:
                     slist.append(pc + str(i) + stat)
                     sdict[pc + str(i) + stat] = st_dict[stat]
-                    
+
 
     def get_CV_coll(self, index_file = "index.ndx"):
+        # Returns a dictionary with All CVs
         cv_coll = {}
         cv_coll["dihedral"] = get_angle(self.configuration_file, index_file)
         cv_coll["distance"] = []
@@ -208,7 +210,6 @@ class VIS:
             new_keys = []
         if new_keys == None:
             new_keys = list(new_parameters.keys())
-        #ion_top =  ".".join(self.configuration_file.split(".")[:-1]) + ".tpr"
         if ions is None or "pname" not in ions:
             pname = "NA" #get_pname()
         else:
@@ -237,10 +238,11 @@ class VIS:
         print("ionate:\n", genion.output.erroroutput.result())
 
     def make_index(self):
+        # Creates new updated index file
         make_index(self.configuration_file, self.index_file)
         update_index_file(self.index_file, self.CV_def, self. pull_groups)
-                                                        
-        
+
+
     def npt(self, new_parameters = None, new_keys = None):
         # Sets up for a constant preassure equilibration run preparation
         if self.is_solvated == 0:
@@ -269,7 +271,7 @@ class VIS:
     def nvt(self, new_parameters = None, new_keys = None):
         # Sets up for a constant volume equilibration run preparation
         if self.is_solvated == 0:
-            return        
+            return
         if new_parameters == None:
             new_parameters = {}
             new_keys = []
@@ -281,7 +283,7 @@ class VIS:
         append_dict(newer_p, new_parameters,
                     new_keys, self.CV_mdp_list)
         new_parameters = newer_p
-        
+
         self.mdp_settings[sim_name] = new_parameters
         self.mdp_settings[sim_name + "_keys"] = new_keys
         additions["in"] = {"-r": self.configuration_file,
@@ -290,9 +292,9 @@ class VIS:
                                 template = "mdp_templates/nvt.mdp.templ",
                                 additions = additions)
         self.single_run(prep, sim_name)
-        
+
     def run(self):
-        # Sets up for a standard MD run preparation
+        # Sets up for a standard MD run preparation, not used in the string method
         pass
 
     def single_prep(self,
@@ -301,7 +303,7 @@ class VIS:
                     template = "",
                     additions = None,
                     restrained = False):
-        # Preperes a run and runs it.
+        # Preperes an MD run
         mdp_create(file_name = name + ".mdp",
                    new_parameters = self.mdp_settings[name],
                    new_keys = self.mdp_settings[name + "_keys"],
@@ -328,6 +330,7 @@ class VIS:
         return prep
 
     def single_run(self, prep, name, log = True):
+        # Runs a prepared MD run
         mdrun = gmx.read_tpr(prep.output.file["-o"])
         md = gmx.mdrun(mdrun)
         md.run()
@@ -339,7 +342,6 @@ class VIS:
         self.latest_path = path
         shutil.move(name + ".mdp", path + name + ".mdp")
         shutil.move(name + ".tpr", path + name + ".tpr")
-        #os.remove(name+".mdp")
 
     def solvate(self, new_parameters = None):
         # Solvates box
@@ -358,6 +360,7 @@ class VIS:
             self.is_solvated = 1
 
     def split_traj(self):
+        # Extracts configurations from trajectory file.
         traj = gmx.commandline_operation(executable = "gmx",
                                   arguments = ["trjconv", "-sep"],
                                   input_files = {"-s": self.latest_path + "topol.tpr",
@@ -367,8 +370,6 @@ class VIS:
         traj.run()
         print("split_traj:\n", traj.output.erroroutput.result())
         return self.latest_path
-
-        # gmx trjconv -s pull.tpr -f pull.xtc -o conf.gro -sep
 
     def steered(self, new_parameters = None, new_keys = None):
         # Sets up for a steered run preparation

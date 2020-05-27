@@ -16,6 +16,7 @@ ITP_WRITE = {}
 
 
 def append_dict(main, extra, mkeys = None, ekeys = None):
+    # Joins  two dictionaries containing .mdp file additions
     for key in extra:
         if key in ["include"] and key in main:
             main[key].union(extra[key])
@@ -28,6 +29,7 @@ def append_dict(main, extra, mkeys = None, ekeys = None):
 
 
 def append_mdp(ordered_keys, all_parameters, name, all_keys, override = False):
+    # Adds .mdp file content to dictionary
     keys, parameters = read_mdp(name)
     for key in keys:
         if key in ["include"]:
@@ -47,6 +49,7 @@ def append_mdp(ordered_keys, all_parameters, name, all_keys, override = False):
             raise KeyError("Conflicting .mdp file parameters")
 
 def backup_file(file_name, copy):
+    # Creates a backup of a file
     done = False
     backup_no = 1
     f1, f2 = file_name.rsplit(".",1)
@@ -66,9 +69,10 @@ def backup_file(file_name, copy):
                 shutil.move(file_name, bu_name)
             done = True
     return bu_name
-    
+
 
 def calc_splines(CVs):
+    # Calculates a set of splines for interpolating a set of CVs
     polys = []
     t = np.array(list(range(CVs.shape[0])))
     for i in range(CVs.shape[1]):
@@ -81,6 +85,7 @@ def create_panda(start,
                  iterations,
                  CV_names,
                  CV_index = ()):
+    # Creates a pandas dataframe containing CV values through the strings in iterations
     if CV_index == ():
         CV_index = tuple(range(len(CV_names) + 2))
     else:
@@ -108,6 +113,7 @@ def create_panda(start,
     return frame
 
 def create_string(start, end, intermediaries, delta, opposites, saves, run_time = 500):
+    # Creates an initial string for the string method
     starter = VIS.VIS.fresh_copy(start)
     n = len(intermediaries)
     if "path" in saves:
@@ -128,13 +134,14 @@ def create_string(start, end, intermediaries, delta, opposites, saves, run_time 
     else:
         cv_traj = get_CVs(path = path,
                           CVs = starter.CV_def,
+                          #steps = runtime + 1,
                           index_file = starter.index_file)
         saves["cv_traj"] = cv_traj
         #save(saves)
     startCV = start.get_CV_coll()
     cv_traj2 =  np.concatenate((np.array(cv_traj),
                                 np.array([startCV["dihedral"] + startCV["distance"]])))
-    mins, deltas = get_extremes(cv_traj2, opposites)
+    mins, deltas = get_extremes(cv_traj2, len(start.get_CV_coll()["dihedral"]))
     #print(mins, deltas, sep = "\n")
     n_dihedrals = len(startCV["dihedral"])
     n_traj = normalise(np.array(cv_traj), mins, deltas, n_dihedrals)
@@ -153,26 +160,17 @@ def create_VIS (c_file,
                 index_file = "index.ndx",
                 pull_groups = None,
                 solvated = 0):
+    # Creates and returns  VIS object. Has potential to do more
     vis = VIS.VIS(c_file,
                   CV_definitions = CV_definitions,
                   topology_file = topology_file,
                   index_file = index_file,
                   pull_groups = pull_groups,
                   solvated = solvated)
-    #vis.EM(restrain_cv = True)
-    # prepare VIS
-    """ #
-    vis.box()
-    vis.solvate()
-    vis.ions()
-    vis.EM()
-    vis.nvt()
-    vis.npt()
-    vis.run()
-    """
     return vis
 
 def delta_angle(angle, origin):
+    # Calculates shortest Angular distance between two angles
     angle -= origin
     if angle < -180:
         angle += 360
@@ -181,6 +179,7 @@ def delta_angle(angle, origin):
     return angle
 
 def delta_angles(angle_array, origin):
+    # Calculates shortest Angular distances between pairs of two angles
     angle_array = angle_array - origin
     for i in range(len(angle_array)):
         angle = angle_array[i]
@@ -192,6 +191,7 @@ def delta_angles(angle_array, origin):
     return angle_array
 
 def denormalise(newCVs, oldCVs, mins, deltas, dih_no):
+    # Returns normalised coordinates to CV space
     denormed = np.zeros(newCVs.shape)
     drift = np.zeros(newCVs.shape)
     for i in range(len(deltas)):
@@ -203,6 +203,7 @@ def denormalise(newCVs, oldCVs, mins, deltas, dih_no):
     return denormed, drift
 
 def dictionarise(text):
+    # Creates a dictionary from a formatted text file string
     rows = text.split("\n")
     result = {}
     for row in rows:
@@ -213,6 +214,7 @@ def dictionarise(text):
     return result
 
 def find_greatest_d_angle(angles):
+    # Calculates the greatest smallest angular distance from a group of angles
     lo = 0
     hi = 0
     max_delta = 0
@@ -229,6 +231,7 @@ def find_greatest_d_angle(angles):
 
 
 def find_matches(trajectories, targets):
+    # Finds the best matches from a steered linear run to targets in CV space
     distances = np.ones(targets.shape[0]*(len(targets)**4))
     indexes = [None]*len(targets)
     j=0
@@ -250,6 +253,7 @@ def find_matches(trajectories, targets):
     return indexes
 
 def get_angle(conf_file, index_file):
+    # Calls Gromacs gangle and the extracts dihedrals from resulting file
     angler = gmx.commandline_operation(executable = "gmx",
                                        arguments = ["gangle",
                                                     "-g1", "dihedral",
@@ -264,13 +268,13 @@ def get_angle(conf_file, index_file):
         return []
     result = open("temp.xvg").read().split("\n")[-2]
     angles = result.split()[1:]
-    #print(angles)
     angles = [float(angle) for angle in angles]
     os.remove("temp.xvg")
     return angles
 
 # default local and 501 steps
 def get_angles(path = "", steps = 501):
+    # Extracts dihedral angles from series of configuration files.
     angles = []
     for i in range(steps):
         angles.append(get_angle(path+"conf" + str(i) + ".gro", "test.ndx"))
@@ -280,6 +284,7 @@ def get_CVs(path = "",
             CVs = None,
             steps = 501,
             index_file = "index.ndx"):
+    # Extracts Dihedrals and distances from a series of configuration files
     if CVs == None:
         raise Exception("CV dictionary needed to extract CVs from .gro files")
     CV_matrix = []
@@ -293,7 +298,7 @@ def get_CVs(path = "",
 
 
 def get_distance(conf_file, index_file, cv):
-    # gmx distance -s em.gro -n indexB.ndx -select 'com of group "first_A" plus com of group "first_B"' -oall dist_test.xvg
+    # Extracts one CV distance from a Configuration file
     gr_sel = "com of group \"" + cv.pull_groups[0].get_name() +\
              "\" plus com of group \"" +cv.pull_groups[1].get_name() + "\""
     distancer = gmx.commandline_operation(executable = "gmx",
@@ -312,39 +317,31 @@ def get_distance(conf_file, index_file, cv):
     os.remove("temp.xvg")
     return [float(dist)]
 
-'''
-def get_cartesian(topology_file, atom_nos = None):
-    # 9 and 15
-    if atom_nos is None:
-        atom_nos = [9, 15]
-    file = open(topology_file)
-    lines = file.read().split("\n")
-    atoms = [lines[atom_no+1] for atom_no in atom_nos]
-    coords = [[float(coord) for coord in atom.split()[-3:]] for atom in atoms]
-    return coords
-'''
-def get_extremes(CVs, opposites):
-    print(CVs.shape)
+def get_extremes(CVs, dih_no):
+    # Finds an origin and maximum distance from it
     mins = np.min(CVs, axis = 0)
     maxs = np.max(CVs, axis = 0)
     deltas = maxs - mins
     for i in range(len(opposites)):
-        if opposites[i]:
+        if i < dih_no:
             base, delta = find_greatest_d_angle(CVs[:, i])
             mins[i] = base
             deltas[i] = delta
     return mins, deltas
 
 def itp_write_dihedral(indexes, value, file):
+    #Depracated: Writes dihedral restraints to restraint file
     row = ["{:10}".format(i) for i in indexes]
     row = "".join(row)
     row += "{:10}{:10}   0   1".format(1,value)+"\n"
     file.write(row)
 
 def itp_write_distance(indexes, value, file):
+    # Not implemented Would write distance restraints to restraint file
     pass
 
 def linear_interpolation(start, end, parts = 10, no_dih = -1):
+    # Linearly interpolates targets for iniotial string
     states = [None]*(parts-1)
     delta = []
     opposites = []
@@ -372,17 +369,20 @@ def linear_interpolation(start, end, parts = 10, no_dih = -1):
     return states, delta, opposites
 
 def load(file_name = "debug.pickle"):
+    # Loads saved simulation state
     try:
         return pickle.load(open(file_name,"rb"))
     except FileNotFoundError:
         return {}
 
 def log(msg, file_name = "log.txt"):
+    # Logs updates to text file
     f = open(file_name, "a")
     f.write(msg + "\n")
     f.close()
 
 def make_index(c_file, o_file):
+    # Generates index file for simulation runs
     b_file_name = backup_file(o_file, copy = False)
     maker =  gmx.commandline_operation(executable = "gmx",
                                        arguments = ["make_ndx"],
@@ -398,6 +398,7 @@ def mdp_create(file_name,
                new_parameters = None,
                new_keys = None,
                old_file = ""):      # for the .mdp-file
+    # Creates temporary .mdp file for MD run
     if new_parameters is None:
         new_parameters = {}
     keys, parameters = [],{}
@@ -433,6 +434,7 @@ def mdp_create(file_name,
                 file.write("{:<25} = {}\n".format(key,value))
 
 def normalise(CVs, mins, deltas, CV_angles):
+    # Normalises CVs 0-1
     normed = np.zeros(CVs.shape)
     for i in range(len(deltas)):
         if i < CV_angles:
@@ -481,9 +483,8 @@ def plot_iterations_2D(phie,
                        savedir = None,
                        CV_names = ["phi", "psi"],
                        lw = 1):
+    # Creates several 2D plots.
     iters = len(iterations)
-    #print(CV_index)
-    #print("init_states: ", init_states)
     init_x = init_states[:, CV_index[0]]
     init_y = init_states[:, CV_index[1]]
     subplots = spdim[0] * spdim[1]
@@ -549,6 +550,7 @@ def plot_iter_splines_2D(phie,
                          savedir = None,
                          CV_names = ["phi", "psi"],
                          lw = 1):
+    # Generates 2D plots with 2 full update cycles
     iters = len(iterations)
     if select is 0:
         select = range(iters)
@@ -579,8 +581,8 @@ def plot_iter_splines_2D(phie,
         plt.show()
 
 def plot_sim_par_coords(panda_frame, savedir = None):
+    # Generates a parallel coordinate system and saves to html file
     fig = px.parallel_coordinates(panda_frame, color = "VISno")
-    # fig = px.parallel_coordinates
     if savedir == None:
         fig.show()
     else:
@@ -602,6 +604,7 @@ def read_index_file(file_name):
 
 
 def read_mdp(file_name):
+    # reads .mdp file to dictionary
     file =  open(file_name)
     keys=[]
     parameters = {}
@@ -625,6 +628,7 @@ def read_mdp(file_name):
     return keys, parameters
 
 def read_multi_mdp(file_names, override = False):
+    # Reads and joins several .mdp files to single dictionary
     all_keys = set()
     ordered_keys = []
     all_parameters = {}
@@ -633,6 +637,7 @@ def read_multi_mdp(file_names, override = False):
     return ordered_keys, all_parameters
 
 def reparam_norm_cvs(splines, n):
+    # Redistributes VIS targets along spline curve
     dists = []
     for i in range(n-1):
         dists.append(integr.quad(lambda x: np.sqrt(np.sum(np.array([spline(x, 1)**2 for spline in splines]))), i, i+1)[0])
@@ -653,7 +658,8 @@ def reparam_norm_cvs(splines, n):
     return reparam
 
 def reparameterise(CVs, opposites, dih_no):
-    mins, deltas = get_extremes(CVs, opposites)
+    # Updates drifts to VIS targets
+    mins, deltas = get_extremes(CVs, dih_no)
     norm_CVs = normalise(CVs, mins, deltas, dih_no)
     splines = calc_splines(norm_CVs)
     new_norm_CVs = reparam_norm_cvs(splines, CVs.shape[0])
@@ -661,9 +667,11 @@ def reparameterise(CVs, opposites, dih_no):
     return new_CVs, drifts, splines, mins, deltas
 
 def save(data, file_name = "debug.pickle"):
+    # Saves program state to file
     pickle.dump(data,open(file_name, "wb"))
 
 def sp_dim(number):
+    # Calculates subplot dimension from number of intended curves
     cols = (4/3*number) ** 0.5
     rows = int(3/4*cols + 0.5)
     cols = int(cols + 0.5)
@@ -672,7 +680,7 @@ def sp_dim(number):
 def update_index_file(file_name = "index.ndx",
                       CVs = {},
                       pull_groups = {}):
-
+    # appends CV definitions to index file
     backup_file(file_name, copy = True)
     new_file = open(file_name, "a")
     new_file.write("\n\n[ dihedrals ]\n")
@@ -683,6 +691,7 @@ def update_index_file(file_name = "index.ndx",
     new_file.close()
 
 def update_topol_file(file_name = "topol.top"):
+    # To be deprecated
     name_parts = file_name.split(".")
     new_name = ".".join(name_parts[:-1])+"_orig.top"
     try:
