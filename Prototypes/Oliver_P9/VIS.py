@@ -194,7 +194,7 @@ class VIS:
         cv_coll["dihedral"] = get_angle(self.configuration_file, index_file)
         cv_coll["distance"] = []
         for cv in self.CV_def["distances"]:
-            cv_coll["distance"].append(get_distance(self.configuration_file,
+            cv_coll["distance"].extend(get_distance(self.configuration_file,
                                                     index_file, cv))
         return cv_coll
 
