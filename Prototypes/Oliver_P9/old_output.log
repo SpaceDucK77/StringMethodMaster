@@ -1,3 +1,0 @@
-LOADED MODULES
-conda activate /cfs/klemming/nobackup/o/oliverfl/py37
-srun -n 1 python VIS_col.py

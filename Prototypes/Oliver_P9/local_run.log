@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "VIS_col.py", line 586, in <module>
-    a.parse_parameters()
-  File "VIS_col.py", line 191, in parse_parameters
-    self.parse_CVs(content.split("---")[2])
-  File "VIS_col.py", line 182, in parse_CVs
-    current_pull_groups.append(COM_group_no[int(g_no)])
-KeyError: 0

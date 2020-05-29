@@ -1,4 +1,4 @@
-name          = AlDiPepSolv # Name of the run, not esential.
+name          = beta2apo # Name of the run, not esential.
 start_conf    = start.gro   # starting position configuration file name
 end_conf      = end.gro     # ending position configuration file name
 topology_file = topol_orig.top   # topology fil name

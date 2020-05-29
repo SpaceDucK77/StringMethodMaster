@@ -28,18 +28,21 @@ else
     if [ -f "/pdc/vol/anaconda/2019.03/py37/etc/profile.d/conda.sh" ]; then
         . "/pdc/vol/anaconda/2019.03/py37/etc/profile.d/conda.sh"
     else
-        export PATH="/pdc/vol/anaconda/2019.03/py37/bin:$PATH"
+       export PATH="/pdc/vol/anaconda/2019.03/py37/bin:$PATH"
     fi
 fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-module swap PrgEnv-cray PrgEnv-gnu
+#module swap PrgEnv-cray PrgEnv-gnu
 module load gromacs/2020.1
-export OMP_NUM_THREADS=1
+export OMP_NUM_THREADS=32
 export GMX_MAXBACKUP=-1
 echo "LOADED MODULES"
 
+rm debug.pickle
+rm index.ndx
+cp original_index.ndx index.ndx
 cmd="conda activate /cfs/klemming/nobackup/o/oliverfl/py37"
 echo $cmd
 $cmd

@@ -1,3 +1,11 @@
+Switching to atp/2.1.3.
+Switching to cray-libsci/19.06.1.
+Switching to cray-mpich/7.7.8.
+Switching to craype/2.6.0.
+Switching to gcc/8.3.0.
+Switching to modules/3.2.11.2.
+Switching to perftools-base/7.1.0.
+Switching to pmi/5.0.14.
 LOADED MODULES
 conda activate /cfs/klemming/nobackup/o/oliverfl/py37
 srun -n 1 python VIS_col.py

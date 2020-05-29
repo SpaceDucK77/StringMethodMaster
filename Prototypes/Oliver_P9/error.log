@@ -1,11 +1,3 @@
-Switching to atp/2.1.3.
-Switching to cray-libsci/19.06.1.
-Switching to cray-mpich/7.7.8.
-Switching to craype/2.6.0.
-Switching to gcc/8.3.0.
-Switching to modules/3.2.11.2.
-Switching to perftools-base/7.1.0.
-Switching to pmi/5.0.14.
 srun: error: Invalid user id 1504: No error
 srun: Warning: Unable to assume uid=1504
 Reading file em_r.tpr, VERSION 2020.1 (single precision)
@@ -14,10 +6,13 @@ Reading file /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMa
 Compiled SIMD: AVX_256, but for this host/run AVX2_256 might be better (see
 log).
 Reading file /cfs/klemming/nobackup/o/oliverfl/gpcr/strings/marko/StringMethodMaster/Prototypes/Oliver_P9/mdrun_0_-9223369104792111563_0/topol.tpr, VERSION 2020.1 (single precision)
-Using 1 OpenMP thread 
+Using 32 OpenMP threads 
 
 
-NOTE: Thread affinity was not set.
+NOTE: The number of threads is not equal to the number of (logical) cores
+      and the -pin option is set to auto: will not pin threads to cores.
+      This can lead to significant performance degradation.
+      Consider using -pin on (and -pinoffset in case you run multiple jobs).
 
 Steepest Descents:
    Tolerance (Fmax)   =  1.00000e+03
@@ -25,10 +20,10 @@ Steepest Descents:
 
 writing lowest energy coordinates.
 
-Steepest Descents converged to Fmax < 1000 in 615 steps
-Potential Energy  = -8.1272156e+05
-Maximum force     =  9.7794244e+02 on atom 19153
-Norm of force     =  1.7909747e+01
+Steepest Descents converged to Fmax < 1000 in 652 steps
+Potential Energy  = -8.1414931e+05
+Maximum force     =  8.4215076e+02 on atom 19153
+Norm of force     =  1.7171769e+01
 
 -------------------------------------------------------
 Program:     GROMACS, version 2020.1
@@ -40,5 +35,5 @@ steered.tpr
 For more information and tips for troubleshooting, please check the GROMACS
 website at http://www.gromacs.org/Documentation/Errors
 -------------------------------------------------------
-srun: error: nid01754: task 0: Exited with exit code 1
-srun: Terminating job step 5891132.0
+srun: error: nid01803: task 0: Exited with exit code 1
+srun: Terminating job step 5903588.0

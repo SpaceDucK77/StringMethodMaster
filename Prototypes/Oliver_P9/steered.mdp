@@ -47,10 +47,10 @@ optimize_fft              = yes  ; Not in documentation
 ; Seem to be default values
 
 ; Berendsen temperature coupling is on in two groups
-Tcoupl                    = Nose-Hoover ;** Also gives tau-t different meaning
-tc_grps                   = Protein   ;Non-Protein
-tau_t                     = 1.0       ;1.0**
-ref_t                     = 310       ;310**
+tcoupl                    = Nose-Hoover
+tc_grps                   = PROT   MEMB   SOL_ION
+tau_t                     = 1.0    1.0    1.0
+ref_t                     = 310.15 310.15 310.15
 ; Pressure coupling is no longer on
 ; Pcoupl          = Parrinello-Rahman
 
