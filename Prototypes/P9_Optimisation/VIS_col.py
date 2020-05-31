@@ -349,7 +349,7 @@ class VIS_collection:
         sCV = self.startVIS.get_CVs()
         eCV = self.endVIS.get_CVs()
         CV_2D = list(self.CV_2D)
-        print(type(self.CV_2D))
+        CV_2D.sort(key = lambda x : self.CV_vis[x])
         for i,CV1 in enumerate(CV_2D):
             CV1index = self.CV_vis[CV1]
             for CV2 in CV_2D[i+1:]:
@@ -431,13 +431,10 @@ class VIS_string:
 
     # returns numpy matrix With the strings CV values
     def get_CVs(self):
-        #try:
         if self.new_CVs is not None:
             return self.new_CVs
         elif self.start_CVs is not None:
             return self.start_CVs
-        #except AttributeError:
-        #    self.new_CVs = None
         start_CVs = [vis.get_CVs() for vis in self.start_string]
         self.start_CVs = np.append(np.append([self.start.get_CVs()],
                                              start_CVs,
@@ -483,7 +480,6 @@ class VIS_string:
                             label = "spline: " + label,
                             linewidth = lw)
         plotwindow.plot(self.drift_CVs[1:-1, xdim],
-                        #self.target_drifts[1:-1, xdim],
                         self.drift_CVs[1:-1, ydim], "o",
                         color = p[0].get_color(),
                         label = "drift_CVs: " + label,

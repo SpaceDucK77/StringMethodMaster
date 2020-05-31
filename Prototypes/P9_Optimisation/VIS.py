@@ -297,6 +297,7 @@ class VIS:
         # Sets up for a standard MD run preparation, not used in the string method
         pass
 
+    # Prepares for simulation using grompp
     def single_prep(self,
                     name,
                     #log = False,
