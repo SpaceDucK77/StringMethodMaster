@@ -53,6 +53,8 @@ def backup_file(file_name, copy):
     try:
         open(file_name)
     except FileNotFoundError:
+        f = open(file_name,"w")
+        f.close()
         return file_name
     while not done:
         bu_name = f1 + "_backup_" + str(backup_no) + "_." + f2
@@ -66,7 +68,7 @@ def backup_file(file_name, copy):
                 shutil.move(file_name, bu_name)
             done = True
     return bu_name
-    
+
 
 def calc_splines(CVs):
     polys = []
