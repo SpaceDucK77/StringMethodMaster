@@ -14,6 +14,10 @@ class DeprecatedError(Exception):
     # Useful class for removing unwanted code
     pass
 
+class DebugException(Exception):
+    # For debugging
+    pass
+
 class VIS:
     # Virtual Initial State for Gromacs MD
 

@@ -8,6 +8,7 @@ import VIS
 import shutil
 from md_tools import *
 
+# Dictionary associating parameter file key to attribute and type
 P_FILE_DICT = {"name": ("name", str),
                "start_conf": ("start", str),
                "end_conf": ("end", str),
@@ -22,27 +23,33 @@ P_FILE_DICT = {"name": ("name", str),
 
 
 class Pull_group(frozenset):
+# Pull group class
 
+    # Constructor override
     def __new__(cls, atom_nos, pg_no = None):
         return super(Pull_group, cls).__new__(cls, atom_nos)
 
+    # Constructor override
     def __init__(self, atom_nos, pg_no = None):
         self.COM_group_numbers = set()
         self.pg_no = pg_no
         self.name = ""
         self.__set_name()
 
-
+    # adds COM groups to pull group
     def add_COM_group_number(self, number):
         self.COM_group_numbers.add(number)
 
+    # name getter
     def get_name(self):
         return self.name
 
+    # Generates a string for adding to index file
     def index_add(self):
         return "[ " + self.name + " ]\n" +\
             " ".join([str(i) for i in sorted(self)])
 
+    # Name generator
     def __set_name(self):
         self.name = "grp_"
         if len(self) == 1:
@@ -50,48 +57,62 @@ class Pull_group(frozenset):
         else:
             self.name += "g"+str(self.pg_no)
 
+# CV super class
 class CV:
 
+    #Constructor method
     def __init__(self, pull_groups):
         self.pull_groups = pull_groups
         self.name = None
 
+    # Name setter
     def set_name(self, name):
         self.name = name
 
+    # Name getter
     def get_name(self):
         return self.name
 
 
+# Dihedral CV sublcass
 class Dihedral(CV):
 
+    # Constructor method
     def __init__(self, pull_groups):
         super(Dihedral, self).__init__(pull_groups)
 
+    # Creates string for adding to index file
     def index_add(self):
         return " ".join([str(next(iter(i))) for i in self.pull_groups])
 
+    # Returns which type of CV
     def geometry(self):
         return "dihedral"
 
+    # creates string for .mdp file pull coordinate pul groups parameter
     def mdp_groups(self):
         return " ".join([str(pg) for pg in [self.pull_groups[cv].pg_no for cv in [0, 1, 1, 2, 2, 3]]])
 
+# Distance CV subclass
 class Distance(CV):
 
+    # Constructor method
     def __init__(self, pull_groups):
         super(Distance, self).__init__(pull_groups)
 
+    # Returns geometry type
     def geometry(self):
         return "distance"
 
+    # creates string for .mdp file pull coordinate pul groups parameter
     def mdp_groups(self):
         return str(self.pull_groups[0].pg_no) + " " + str(self.pull_groups[1].pg_no)
 
 
 class VIS_collection:
-    """ A collection of several iterations. """
+    """ A collection of several string iterations. """
 
+    # Constructor method
     def __init__(self, parameter_file):
         self.parameter_file = parameter_file
         self.name = "String_method"
@@ -114,6 +135,7 @@ class VIS_collection:
         self.startVIS = None
         self.endVIS = None
 
+    # Generates initial string from end point VISs
     def create_base_string(self):
         if self.state == 2:
             self.CV_targets, self.delta, self.opposites = \
@@ -139,6 +161,7 @@ class VIS_collection:
             self.state = 3
             save(self)
 
+    # Parses CVs from .smg file content
     def parse_CVs(self, text):
         COM_group_no = {}
         current_pg_no = 1
@@ -156,9 +179,7 @@ class VIS_collection:
                 if atom not in self.pull_groups:
                     group = Pull_group(atom, current_pg_no)
                     self.pull_groups[group] = group
-#                    current_pull_groups.append(group)
                     current_pg_no += 1
-#                else:
                 current_pull_groups.append(self.pull_groups[atom])
 
             self.CVs["dihedrals"].append(Dihedral(current_pull_groups))
@@ -194,7 +215,10 @@ class VIS_collection:
         for CV in self.CVs["distances"]:
             log(str(CV.pull_groups))
 
-
+    # Splits .smg file content into 3 parts. and calls their respective parser
+    # Simulation parameters
+    # CV parameters
+    # Visualisation parameters
     def parse_parameters(self):
         if self.state > 0:
             return
@@ -206,6 +230,7 @@ class VIS_collection:
         self.state = 1
         save(self)
 
+    # Parses simulation parameters from text
     def parse_sim_parameters(self, text):
         attributes = dictionarise(text)
         for attribute in attributes:
@@ -216,7 +241,7 @@ class VIS_collection:
             else:
                 raise NameError("Parameter "+ attribute + " not recognised")
 
-
+    # Parses visualisation parameters
     def parse_visualisations(self, text):
         for row in text.split("\n"):
             row = row.split("#")[0].strip()
@@ -232,6 +257,7 @@ class VIS_collection:
             if plot:
                 self.CV_2D.add(name)
 
+    # Prepares end point VISs from configuration files
     def prepare_endpoints(self):
         if self.state == 1:
             backup_file(self.topology, True)
@@ -276,7 +302,7 @@ class VIS_collection:
             save(self)
 
 
-
+    # Iterates the string method
     def run_method(self):
         try:
             log_t = open("log.txt").read()
@@ -314,6 +340,7 @@ class VIS_collection:
             save(self)
         print("self.state:", self.state)
 
+    # Generates visualisations
     def visualisations(self):
         if self.state != 4:
             return
@@ -322,7 +349,7 @@ class VIS_collection:
         sCV = self.startVIS.get_CVs()
         eCV = self.endVIS.get_CVs()
         CV_2D = list(self.CV_2D)
-        print(type(self.CV_2D))
+        CV_2D.sort(key = lambda x : self.CV_vis[x])
         for i,CV1 in enumerate(CV_2D):
             CV1index = self.CV_vis[CV1]
             for CV2 in CV_2D[i+1:]:
@@ -366,6 +393,8 @@ class VIS_collection:
 
 class VIS_string:
     """ One string of VISs representing one iteration of the string method. """
+
+    # Constructor method
     def __init__(self, start, end, string, no_CVs):
         self.start = start
         self.end = end
@@ -381,16 +410,18 @@ class VIS_string:
         self.dih_no = len(self.start.get_CV_coll()["dihedral"])
         self.get_CVs()
 
+    # String representation
     def __str__(self):
         cvs = np.array([ swarm.averages(origin_ok = True) for swarm in self.SO])
         return "Swarm:\n" + str(cvs)
 
+    # Frees up disk space
     def clear_string_storage_HD(self):
         for swarm in self.SO:
             swarm.clear_swarm_storage_HD()
 
+    # Creates VIS_swarm objects (Swarm Origins (SOs))
     def create_SO(self, redo = False):
-        # Creates VIS_swarm objects (Swarm Origins (SOs))
         if self.state == 0 or redo:
             print("Creating swarms from VISs")
             self.SO = [None] * len(self.start_string)
@@ -398,15 +429,12 @@ class VIS_string:
                 self.SO[i] = VIS_swarm(self.start_string[i])
             self.state = 1
 
-
+    # returns numpy matrix With the strings CV values
     def get_CVs(self):
-        #try:
         if self.new_CVs is not None:
             return self.new_CVs
         elif self.start_CVs is not None:
             return self.start_CVs
-        #except AttributeError:
-        #    self.new_CVs = None
         start_CVs = [vis.get_CVs() for vis in self.start_string]
         self.start_CVs = np.append(np.append([self.start.get_CVs()],
                                              start_CVs,
@@ -415,20 +443,7 @@ class VIS_string:
                                    axis =0 )
         return self.start_CVs
 
-    ''' def get_CV_start(self):
-        #try:
-        if self.start_CVs is not None:
-            return self.start_CVs
-        #except AttributeError:
-        #    self.new_CVs = None
-        start_CVs = [vis.get_CVs() for vis in self.start_string]
-        self.start_CVs = np.append(np.append([self.start.get_CVs()],
-                                             start_CVs,
-                                             axis = 0),
-                                   [self.end.get_CVs()],
-                                   axis =0 )
-        return self.start_CVs'''
-
+    # plots itself on the given plot window
     def plot_CVs_2D(self, plotwindow, CV_index = (0,1), label = "A string", lw = 1):
         #self.get_CV_start()
         #print("VIS_string plot_CVs_2D, self.start_CVs", self.start_CVs.shape)
@@ -440,6 +455,7 @@ class VIS_string:
                         label = label,
                         linewidth = lw)
 
+    # Plots its full iteration to the given plot window
     def plot_spline_curve(self, plotwindow, CV_index = (0, 1), label = "A string", lw =1):
         if "spline_data" not in dir(self) and self.state > 1:
             state = self.state
@@ -464,7 +480,6 @@ class VIS_string:
                             label = "spline: " + label,
                             linewidth = lw)
         plotwindow.plot(self.drift_CVs[1:-1, xdim],
-                        #self.target_drifts[1:-1, xdim],
                         self.drift_CVs[1:-1, ydim], "o",
                         color = p[0].get_color(),
                         label = "drift_CVs: " + label,
@@ -479,6 +494,7 @@ class VIS_string:
                         label = "start_CVs: " + label,
                         linewidth = lw)
 
+    # Calculates targets for the next string
     def prep_new_CVs(self, opposites, redo = False):
         if self.state == 2 or (redo and self.state > 2):
             print("Calculating CV values for new string")
@@ -493,6 +509,7 @@ class VIS_string:
                                    len(self.start.get_CV_coll()["dihedral"]))
             self.state = 3
 
+    # Creates a new string from its own origin and new targets
     def prep_new_string(self):
         if self.state == 3:
             old_CVs = [self.start.get_CVs()]
@@ -517,6 +534,7 @@ class VIS_string:
             distance = np.linalg.norm(self.new_CVs - old_CVs)
         return distance, VIS_string(self.start, self.end, new_string, self.cv_dim)
 
+    # Runs MD simulations for swarms of trajexctories for each bead
     def run_swarms(self, redo = False):
         if self.state == 1 or (redo and self.state > 1):
             print("Running swarms")
@@ -532,6 +550,8 @@ class VIS_string:
 
 class VIS_swarm:
     """ One swarm of trajectories from a single origin. """
+
+    # Constructor method
     def __init__(self, origin, trajectories = 20):
         self.origin = VIS.VIS.fresh_copy(origin, self)
         self.origin.EM(restrain_cv = True)
@@ -547,6 +567,7 @@ class VIS_swarm:
         self.drift = None
         self.av_drift = None
 
+    # Calculates swarms average drift
     def averages(self, origin_ok = False):
         if not self.ran_swarm and self.CVs is None and not origin_ok:
             raise ValueError("Trying to get average of non existing swarm")
@@ -564,14 +585,12 @@ class VIS_swarm:
             CV_types = [len(CV_types[key]) for key in CV_types]
             col = 0
             for col in range(self.CVs.shape[1]):
-            #while col < CV_types[0]:
                 if col < CV_types[0]:
                     self.drift[:, col] = delta_angles(self.CVs[:, col],
                                                       self.origin_CVs[col])
                 else:
                     self.drift[:, col] = self.CVs[:, col] - self.origin_CVs[col]
             self.av_drift = np.mean(self.drift, axis = 0)
-            #self.delete_swarm()
         targets = np.zeros(self.av_drift.shape)
         targets720 = np.zeros(self.av_drift.shape)
         for i in range(self.av_drift.shape[0]):
@@ -582,12 +601,14 @@ class VIS_swarm:
             targets720[i] = self.av_drift[i] + self.origin_CVs[i]
         return targets720, targets
 
+    # Clears HD space
     def clear_swarm_storage_HD(self):
         for i,vis in enumerate(self.trajs):
             vis.delete_runs()
             self.trajs[i] = VIS.VIS.fresh_copy(self.origin, self)
         self.ran_swarm = False
 
+    # Runs all trajectories for this bead.
     def run_swarm(self, parameters = None, run_override = False):
         if run_override or not self.ran_swarm:
             if parameters == None:
@@ -598,7 +619,7 @@ class VIS_swarm:
         self.CVs = None
 
 
-
+""" Do not use
 if __name__ == "__main__":
     a = load()
     if a =={}:
@@ -609,3 +630,4 @@ if __name__ == "__main__":
     a.create_base_string()
     a.run_method()
     a.visualisations()
+"""

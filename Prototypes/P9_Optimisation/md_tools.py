@@ -6,6 +6,7 @@ import scipy.interpolate as interp
 import scipy.integrate as integr
 import plotly.express as px
 import VIS
+import VIS_col
 import os
 import pickle
 import shutil
@@ -324,7 +325,7 @@ def get_extremes(CVs, dih_no):
     mins = np.min(CVs, axis = 0)
     maxs = np.max(CVs, axis = 0)
     deltas = maxs - mins
-    for i in range(len(opposites)):
+    for i in range(dih_no):
         if i < dih_no:
             base, delta = find_greatest_d_angle(CVs[:, i])
             mins[i] = base
@@ -388,12 +389,15 @@ def make_index(c_file, o_file):
     b_file_name = backup_file(o_file, copy = False)
     maker =  gmx.commandline_operation(executable = "gmx",
                                        arguments = ["make_ndx"],
-                                       input_files = {"-f": c_file,
-                                                      "-n": b_file_name},
+                                       input_files = {"-f": c_file#,
+                                                      #"-n": b_file_name
+                                                      },
                                        output_files = {"-o": o_file},
                                        stdin = "q\n")
     maker.run()
+    shutil.copyfileobj(open(b_file_name, "rb"), open(o_file, "ab"))
     log("make_index:\n" + str(maker.output.erroroutput.result()))
+    #raise VIS.DebugException()
 
 
 def mdp_create(file_name,
