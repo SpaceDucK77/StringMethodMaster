@@ -56,6 +56,7 @@ def backup_file(file_name, copy):
     try:
         open(file_name)
     except FileNotFoundError:
+        open(file_name,"w")
         return file_name
     while not done:
         bu_name = f1 + "_backup_" + str(backup_no) + "_." + f2
