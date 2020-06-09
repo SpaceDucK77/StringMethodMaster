@@ -134,6 +134,7 @@ class VIS_collection:
         self.CV_2D = set()
         self.startVIS = None
         self.endVIS = None
+        self.temp_dict = None
 
     # Generates initial string from end point VISs
     def create_base_string(self):
@@ -143,13 +144,15 @@ class VIS_collection:
                                      self.end_pointCVs[1],
                                      parts = self.beads,
                                      no_dih = len(self.CVs["dihedrals"]))
-            self.temp_dict = {}
+            if self.temp_dict ==  None:
+                self.temp_dict = {}
             self.beads_list = create_string(start = self.startVIS,
                                             end = self.endVIS,
                                             intermediaries = self.CV_targets,
                                             delta = self.delta,
                                             opposites = self.opposites,
                                             saves = self.temp_dict,
+                                            collection = self,
                                             run_time = self.steer_run) #Final parameter should be removed
             self.state = 2.5
             save(self)
@@ -341,7 +344,7 @@ class VIS_collection:
         print("self.state:", self.state)
 
     # Generates visualisations
-    def visualisations(self):
+    def visualisations(self, lw):
         if self.state != 4:
             return
         if not os.path.isdir("plots"):
@@ -370,7 +373,8 @@ class VIS_collection:
                                    spdim = sp_dim(len(self.strings) // 5 + 1),
                                    select = 3,
                                    savedir = "plots",
-                                   CV_names = CV_names)
+                                   CV_names = CV_names,
+                                   lw = lw)
                 plot_iter_splines_2D(phie,
                                      psie,
                                      istates,
@@ -379,7 +383,8 @@ class VIS_collection:
                                      select = list(range(len(self.strings))),
                                      ppf = 2,
                                      savedir = "plots",
-                                     CV_names = CV_names)
+                                     CV_names = CV_names,
+                                     lw = lw)
                 frame = create_panda(sCV,
                                      eCV,
                                      istates,

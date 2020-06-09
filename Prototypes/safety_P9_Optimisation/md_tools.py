@@ -115,7 +115,7 @@ def create_panda(start,
     frame = frame[names]
     return frame
 
-def create_string(start, end, intermediaries, delta, opposites, saves, run_time = 500):
+def create_string(start, end, intermediaries, delta, opposites, saves, collection, run_time = 500):
     # Creates an initial string for the string method
     starter = VIS.VIS.fresh_copy(start)
     n = len(intermediaries)
@@ -131,7 +131,7 @@ def create_string(start, end, intermediaries, delta, opposites, saves, run_time 
         path = starter.split_traj()
         saves["cv_span"] = cv_span
         saves["path"] = path
-        #save(saves)
+        save(collection)
     if "cv_traj" in saves:
         cv_traj = saves["cv_traj"]
     else:
@@ -140,8 +140,9 @@ def create_string(start, end, intermediaries, delta, opposites, saves, run_time 
                           #steps = runtime + 1,
                           index_file = starter.index_file)
         saves["cv_traj"] = cv_traj
-        #save(saves)
+        save(collection)
     startCV = start.get_CV_coll()
+    print(startCV)
     cv_traj2 =  np.concatenate((np.array(cv_traj),
                                 np.array([startCV["dihedral"] + startCV["distance"]])))
     mins, deltas = get_extremes(cv_traj2, len(start.get_CV_coll()["dihedral"]))
@@ -202,7 +203,7 @@ def denormalise(newCVs, oldCVs, mins, deltas, dih_no):
         if i < dih_no:
             denormed[:, i] = delta_angles(drift[:, i], -mins[i])
         else:
-            denormed[:, i] = drifts[:, i] + mins[i]
+            denormed[:, i] = drift[:, i] + mins[i]
     return denormed, drift
 
 def dictionarise(text):
