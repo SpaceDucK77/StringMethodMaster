@@ -297,9 +297,9 @@ class VIS_collection:
                 self.startVIS.ions()
             self.startVIS.EM(restrain_cv = True)
             if self.solvated:
-                print("-------- NVT --------")
+                log("-------- NVT --------")
                 self.startVIS.nvt()
-                print("-------- NPT --------")
+                log("-------- NPT --------")
                 self.startVIS.npt()
             self.state = 2
             save(self)
