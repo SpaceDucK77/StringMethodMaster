@@ -19,7 +19,9 @@ P_FILE_DICT = {"name": ("name", str),
                "max_iter": ("iterations", int),
                "max_conv": ("conv_limit", float),
                "beads": ("beads", int),
-               "steered_run_time": ("steer_run", float)}
+               "steered_run_time": ("steer_run", float),
+               "swarm_size": ("swarm_size", int),
+               "swarm_sim_steps": ("swarm_time", int)}
 
 
 class Pull_group(frozenset):
@@ -123,6 +125,8 @@ class VIS_collection:
         self.index = None
         self.beads = None
         self.steer_run = 500
+        self.swarm_size = 20
+        self.swarm_time = 20
         self.strings = []
         self.state = 0
         self.curr_iter = 0
@@ -164,7 +168,9 @@ class VIS_collection:
                                            end = self.endVIS,
                                            string = self.beads_list,
                                            no_CVs = len(self.end_pointCVs[0]),
-                                           name =  self.name + "/String_0/"))
+                                           name =  self.name + "/String_0/",
+                                           trajs_per_swarm = self.swarm_size,
+                                           swarm_time = self.swarm_time))
             self.state = 3
             save(self)
 
@@ -238,10 +244,10 @@ class VIS_collection:
             os.mkdir(self.name)
         except:
             print("""Trying to run string method with same name as local directory.
-Probably a previous string method run, this has been disallowed due to possible 
+Probably a previous string method run, this has been disallowed due to possible
 naming coflicts\n""")
             log("""Trying to run string method with same name as local directory.
-Probably a previous string method run, this has been disallowed due to possible 
+Probably a previous string method run, this has been disallowed due to possible
 naming coflicts\n""")
             exit()
         self.state = 1
@@ -420,7 +426,7 @@ class VIS_string:
     """ One string of VISs representing one iteration of the string method. """
 
     # Constructor method
-    def __init__(self, start, end, string, no_CVs, name):
+    def __init__(self, start, end, string, no_CVs, name, trajs_per_swarm = 20, swarm_time = 20):
         self.start = start
         self.end = end
         self.start_string = string
@@ -433,6 +439,8 @@ class VIS_string:
         self.new_CVs = None
         self.target_drifts = None
         self.dih_no = len(self.start.get_CV_coll()["dihedral"])
+        self.no_trajs = trajs_per_swarm
+        self.swarm_time = swarm_time
         self.get_CVs()
         self.name = name
         try:
@@ -459,6 +467,8 @@ class VIS_string:
             self.SO = [None] * len(self.start_string)
             for i in range(len(self.SO)):
                 self.SO[i] = VIS_swarm(self.start_string[i],
+                                       trajectories = self.no_trajs,
+                                       swarm_steps = self.swarm_time,
                                        name = self.name + "bead_" +
                                        str(i) + "/")
             self.state = 1
@@ -577,7 +587,8 @@ class VIS_string:
                                     self.end,
                                     new_string,
                                     self.cv_dim,
-                                    name = new_name)
+                                    name = new_name,
+                                    trajs_per_swarm = self.no_trajs)
 
     # Runs MD simulations for swarms of trajexctories for each bead
     def run_swarms(self, redo = False):
@@ -597,7 +608,7 @@ class VIS_swarm:
     """ One swarm of trajectories from a single origin. """
 
     # Constructor method
-    def __init__(self, origin, trajectories = 20, name = None):
+    def __init__(self, origin, trajectories = 20, swarm_steps = 20, name = None):
         self.name = name
         try:
             os.mkdir(self.name)
@@ -608,6 +619,7 @@ class VIS_swarm:
         self.origin.nvt()
         self.origin.npt()
         self.n_traj = trajectories
+        self.steps = swarm_steps
         self.trajs = [None] * trajectories
         for i in range(trajectories):
             self.trajs[i] = VIS.VIS.fresh_copy(self.origin,
@@ -667,7 +679,7 @@ class VIS_swarm:
     def run_swarm(self, parameters = None, run_override = False):
         if run_override or not self.ran_swarm:
             if parameters == None:
-                parameters = {"nsteps": 20, "dt": 0.002}
+                parameters = {"nsteps": self.steps, "dt": 0.002}
             for vis in self.trajs:
                 vis.swarm(parameters)
             self.ran_swarm = True
