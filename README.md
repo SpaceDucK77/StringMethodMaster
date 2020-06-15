@@ -1,6 +1,6 @@
 # StringMethodMaster
 ## Molecular Dynamics implementing string method with swarms of trajectories
-The main project folder is P9_Optimisation it should contain the latest files.
+The main project folder is P10_Production it should contain the latest files.
 
 In order to be anle to run this software the following software and packages
 need to be installed.
