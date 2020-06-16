@@ -15,6 +15,10 @@ def get_bins1d(mins, deltas, value, size):
     bins = np.floor(size*(value-mins)/deltas)
     return bins.astype(int)
 
+def normalise(matrix):
+    b = np.sum(matrix, axis = 1)+1e-9
+    return (matrix.T/b).T
+
 
 saves = load("e_map.pickle")
 if "a" not in saves:
@@ -32,13 +36,14 @@ if "values" not in saves:
     saves["values"] = values
     save(saves, "e_map.pickle")
 values = saves["values"]
+np.save("swarm_coords.npy", values)
 mins = np.amin(values, axis = 0)
 maxs = np.amax(values, axis = 0)
 print(mins,maxs)
 print(values.shape)
-deltas = (maxs - mins)*1.0000001
+deltas = (maxs - mins)*(1+1e-11)
 size = 3
-size2 = 10
+size2 = 11
 
 t_matrix = np.zeros((size**2,size**2))
 phi_t_matrix = np.zeros((size2,size2))
@@ -52,8 +57,17 @@ for row in range(0,values.shape[0],2):
     phi_t_matrix[bins_i[0], bins_j[0]] += 1
     psi_t_matrix[bins_i[1], bins_j[1]] += 1
 
-#print(t_matrix)
+log("t_matrix", "emap.log")
+log(str(t_matrix), "emap.log")
+log("phi_t_matrix", "emap.log")
+log(str(phi_t_matrix), "emap.log")
+log("psi_t_matrix", "emap.log")
+log(str(phi_t_matrix), "emap.log")
 #input("pause")
+t_matrix = normalise(t_matrix)
+phi_t_matrix = normalise(phi_t_matrix)
+psi_t_matrix = normalise(psi_t_matrix)
+
 v, vec = np.linalg.eig(t_matrix)
 phi_v, phi_vec = np.linalg.eig(phi_t_matrix)
 psi_v, psi_vec = np.linalg.eig(psi_t_matrix)
@@ -99,6 +113,7 @@ plt.figure()
 plt.plot(y2, E_psi)
 plt.xlabel("psi")
 
-plt.show()
 print(levels)
 print(EM)
+print(phi_v, phi_vec, sep="\n\n")
+plt.show()
