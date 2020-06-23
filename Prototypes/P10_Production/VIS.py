@@ -348,6 +348,12 @@ class VIS:
                     template = "",
                     additions = None,
                     restrained = False):
+        new_path = self.main_path + name + "/"
+        try:
+            os.listdir(new_path)
+            return None
+        except FileNotFoundError:
+            pass
         # Preperes an MD run
         mdp_create(file_name = name + ".mdp",
                    new_parameters = self.mdp_settings[name],
@@ -372,6 +378,7 @@ class VIS:
                                           output_files = output_files)
         prep.run()
         log("prep "+ name + ":\n" +str(prep.output.erroroutput.result()))
+        #input("Paus")
         return prep
 
     def single_run(self, prep, name, log_run = True):
@@ -410,6 +417,7 @@ class VIS:
                 + "\nfor: " + new_path)
         shutil.move(name + ".mdp", new_path + name + ".mdp")
         shutil.move(name + ".tpr", new_path + name + ".tpr")
+        #input("Pause")
         return path
 
     def solvate(self, new_parameters = None):
@@ -488,6 +496,8 @@ class VIS:
         prep = self.single_prep(name = "swarm",
                                 template = template,
                                 additions =  additions)
+        #input(str(prep)+":\nprep done")
         rem_path = self.single_run(prep, sim_name)
+        #input(str(rem_path) + ":\nrun done")
         if rem_path != None:
             shutil.rmtree(rem_path)

@@ -42,7 +42,7 @@ maxs = np.amax(values, axis = 0)
 print(mins,maxs)
 print(values.shape)
 deltas = (maxs - mins)*(1+1e-11)
-size = 3
+size = 4
 size2 = 11
 
 t_matrix = np.zeros((size**2,size**2))
