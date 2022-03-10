@@ -2,7 +2,7 @@
 ## Molecular Dynamics implementing string method with swarms of trajectories
 The main project folder is P10_Production it should contain the latest files.
 
-In order to be anle to run this software the following software and packages
+In order to be able to run this software the following software and packages
 need to be installed.
 * Gromacs 2020.1
 * Python 3.7
